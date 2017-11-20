@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.ScoreDetailsService">
+	<resultMap type="com.db.entity.ScoreDetails" id="BaseResultMap">
+		<result column="details_id" property="detailsId" jdbcType="INTEGER" />
+		<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+		<result column="question_id" property="questionId" jdbcType="INTEGER" />
+		<result column="choosed_answer" property="choosedAnswer" jdbcType="VARCHAR" />
+		<result column="is_true" property="isTrue" jdbcType="INTEGER" />
+
+	</resultMap>
+
+
+</mapper>

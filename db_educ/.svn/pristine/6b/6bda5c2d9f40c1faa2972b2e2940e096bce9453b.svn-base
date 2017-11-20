@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.TeacherStatusService">
+	<resultMap type="com.db.entity.TeacherStatus" id="BaseResultMap">
+		<result column="status_id" property="statusId" jdbcType="INTEGER" />
+		<result column="status_name" property="statusName" jdbcType="VARCHAR" />
+
+	</resultMap>
+
+
+</mapper>

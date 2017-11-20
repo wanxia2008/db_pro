@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.TeachingMaterialService">
+	<resultMap type="com.db.entity.TeachingMaterial" id="TeachingMaterialMap">
+		<result column="material_id" property="materialId" jdbcType="INTEGER" />
+		<result column="meterial_name" property="materialName" jdbcType="VARCHAR" />
+          <result column="create_time" property="createTime" />
+          <result column="subject" property="subject" jdbcType="INTEGER" />
+           
+           <association property="subject2" javaType="com.db.entity.Subject">
+         <id column="subject_id" property="subjectId" jdbcType="INTEGER" />    
+        <result column="subject_name" property="subjectName" jdbcType="VARCHAR" /> 
+     </association>
+	</resultMap>
+	
+<!-- 教材列表 -->
+<select id="teachingMaterial" resultMap="TeachingMaterialMap">
+    select * from tb_teaching_material
+</select>
+<select id="getCount" resultType="int">
+	select count(*) from tb_teaching_material where 1=1
+	<if test="meterialName != null and meterialName !=''">
+		and meterial_name like CONCAT('%','${meterialName}','%')
+	</if>
+	<if test="type == 5 or type ==6">
+		<if test="subject != null">
+			and subject=#{subject}
+		</if>
+	</if>
+</select>
+
+<select id="materialList" resultMap="TeachingMaterialMap">
+       select * from tb_teaching_material tm 
+       left join tb_subject sub on tm.subject=sub.subject_id
+        where 1=1
+  <if test="meterialName != null and meterialName !=''">
+      and tm.meterial_name like CONCAT('%','${meterialName}','%')
+  </if>
+  <if test="type == 5 or type ==6">
+		<if test="subject != null">
+			and tm.subject=#{subject}
+		</if>
+	</if>
+   order by tm.create_time desc limit #{pageNo},#{pageSize}
+</select>
+
+<delete id="daleteMaterial" parameterType="int">
+    delete from tb_teaching_material where material_id=#{materialId}
+</delete>
+<insert id="addMaterial" parameterType="com.db.entity.TeachingMaterial">
+  insert into tb_teaching_material (meterial_name,create_time,subject) 
+              values(#{materialName},#{createTime},#{subject})
+</insert>
+<select id="getMeterialName" resultMap="TeachingMaterialMap">
+    select * from tb_teaching_material where meterial_name=#{meterialName} and subject=#{subject}
+</select>
+<select id="getMaterialById" resultMap="TeachingMaterialMap">
+    select * from tb_teaching_material where material_id=#{materialId}
+</select>
+<update id="updateMateerial" parameterType="com.db.entity.TeachingMaterial">
+   update tb_teaching_material set meterial_name=#{materialName} 
+   ,subject=#{subject} where material_id=#{materialId}
+</update>
+<select id="getTeacherIsMate" resultMap="TeachingMaterialMap">
+select * from tb_teaching_material where subject=#{subject}
+</select>
+</mapper>

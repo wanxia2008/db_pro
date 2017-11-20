@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.RangeLessonService">
+
+	<resultMap type="com.db.entity.RangeLesson" id="RangeLessonMap">
+		<result column="lesson_id" property="lessonId" jdbcType="INTEGER" />
+		<result column="lesson_name" property="lessonName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+	<!-- 题型列表 -->
+	<select id="rangeLessonList" resultMap="RangeLessonMap">
+		select * from td_lesson where 1=1
+		<if test="lessonName != null and lessonName != ''">
+			and lesson_name like CONCAT('%','${lessonName}','%')
+		</if>
+		order by lesson_name limit #{pageNo},#{pageSize};
+	</select>
+	<!-- 题型列表1 -->
+	<select id="getLessonList" resultMap="RangeLessonMap">
+		select * from td_lesson order by lesson_id;
+	</select>
+	<select id="getCount" resultType="int">
+		select count(*) from td_lesson where 1=1
+		<if test="lessonName != null and lessonName != ''">
+			and lesson_name like CONCAT('%','${lessonName}','%')
+		</if>
+	</select>
+	<select id="getLessonNameById" resultMap="RangeLessonMap">
+		select * from td_lesson where lesson_name=#{lessonName}
+	</select>
+	<select id="getLessonById" resultMap="RangeLessonMap">
+		select * from td_lesson where lesson_id=#{lessonId}
+	</select>
+	<insert id="addLesson" parameterType="com.db.entity.RangeLesson">
+		insert into td_lesson (lesson_name,create_time)
+		values(#{lessonName},#{createTime})
+	</insert>
+	<update id="updateLessonName" parameterType="com.db.entity.RangeLesson">
+		update td_lesson set create_time=#{createTime},lesson_name=#{lessonName}
+		where lesson_id=#{lessonId}
+	</update>
+	<select id="findLesson" resultMap="RangeLessonMap">
+		select * from td_lesson
+	</select>
+	<delete id="lessonDelete"  parameterType="java.lang.Integer">
+	  delete from td_lesson where lesson_id=#{lessonId}
+	</delete>
+</mapper>

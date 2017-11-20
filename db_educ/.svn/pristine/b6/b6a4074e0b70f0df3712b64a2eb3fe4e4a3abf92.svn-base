@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.QuestionFillService">
+	<resultMap type="com.db.entity.QuestionFill" id="QuestionFillMap">
+		<result column="fill_id" property="fillId" jdbcType="INTEGER" />
+		<result column="fill_title" property="fillTitle" jdbcType="VARCHAR" />
+		<result column="fill_answer" property="fillAnswer" jdbcType="VARCHAR" />
+		<result column="answer_analysis" property="answerAnalysis"
+			jdbcType="VARCHAR" />
+		<result column="fill_id" property="fillId" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="knowledge" property="knowledge" jdbcType="INTEGER" />
+		<result column="knowledge_begin" property="knowledgeBegin"
+			jdbcType="INTEGER" />
+		<result column="question_degree" property="questionDegree"
+			jdbcType="INTEGER" />
+		<result column="question_type" property="type" jdbcType="INTEGER" />
+		<result column="question_source" property="fillSourse"
+			jdbcType="INTEGER" />
+		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
+		<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+		<result column="used_count" property="usedCount" jdbcType="INTEGER" />
+		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="is_remove" property="isRemove" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+<!--         <result column="type_name" property="typeName" jdbcType="VARCHAR" /> -->
+
+		<!-- 1 -->
+		<association property="paperDetails" javaType="com.db.entity.PaperDetails">
+			<id property="id" column="id" />
+			<result property="questionId" column="question_id" />
+			<result property="paperId" column="paper_id" />
+			<result property="value" column="value" />
+			<result property="number" column="number" />
+			<result property="createTime" column="create_time" />
+			<result property="paperType" column="paper_type" />
+		</association>
+		<!-- 2 -->
+		<association property="homeworkDetails" javaType="com.db.entity.HomeworkDetails">
+			<id property="hdId" column="hd_id" />
+			<result column="question_id" property="questionId" jdbcType="INTEGER" />
+			<result column="question_type" property="questionType"
+				jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="value" property="value" jdbcType="INTEGER" />
+			<result column="create_time" property="createTime" />
+			<result column="update_time" property="updateTime" />
+		</association>
+
+		<association property="myMistakes" javaType="com.db.entity.MyMistakes">
+			<id column="mistakes_id" property="mistakesId" jdbcType="INTEGER" />
+			<result column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="mistakes_number" property="mistakesNumber"
+				jdbcType="INTEGER" />
+			<result column="topic_type" property="topicType" jdbcType="INTEGER" />
+			<result column="current_mistakes" property="currentMistakes"
+				jdbcType="INTEGER" />
+			<result column="question_id" property="questionId" jdbcType="INTEGER" />
+			<result column="value" property="value" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="create_time" property="createTime" />
+		</association>
+
+		<association property="questionsType" javaType="com.db.entity.QuestionsType">
+			<id column="topic_id" property="topicId" jdbcType="INTEGER" />
+			<result column="topic_name" property="topicName" jdbcType="VARCHAR" />
+			<result column="create_time" property="createTime" />
+			<result column="update_time" property="updateTime" />
+			<result column="typic_order" property="typicOrder" jdbcType="INTEGER" />
+		</association>
+		<association property="paperAnswer" javaType="com.db.entity.PaperAnswer">
+			<id column="answer_id" property="answerId" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="write_answer" property="writeAnswer" jdbcType="VARCHAR" />
+			<result column="is_true" property="isTrue" jdbcType="INTEGER" />
+			<result column="question_type" property="questionType"
+				jdbcType="INTEGER" />
+		</association>
+		<association property="fillType" javaType="com.db.entity.QuestionFillType">
+		   <id column="type_id" property="typeId" jdbcType="INTEGER" />
+		    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+		</association>
+		<association javaType="com.db.entity.HomeworkAnswer"
+			property="homeworkanswer">
+			<id column="answer_id" property="answerId" jdbcType="INTEGER" />
+			<result column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="question_id" property="questionId" jdbcType="INTEGER" />
+			<result column="question_type" property="questionType"
+				jdbcType="INTEGER" />
+			<result column="write_answer" property="writeAnswer" jdbcType="VARCHAR" />
+			<result column="value" property="value" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="is_true" property="isTrue" jdbcType="INTEGER" />
+		</association>
+
+		<association property="subject2" javaType="com.db.entity.Subject">
+			<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+			<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="grade" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="teacher" javaType="com.db.entity.Teacher">
+			<id column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+		</association>
+
+	</resultMap>
+
+
+	<!-- -->
+	<select id="getQuestionFillById" resultMap="QuestionFillMap">
+		select * from tb_question_fill where fill_id=#{fillId}
+	</select>
+	<!--添加填空题 -->
+	<insert id="addQuestionFill" parameterType="com.db.entity.QuestionFill">
+		insert into
+		tb_question_fill
+		(create_time,fill_title,fill_answer,subject,knowledge,
+		question_degree,question_type,tag_id,teacher_id,used_count,is_public,is_remove
+		<if test="answerAnalysis != null and answerAnalysis != ''">
+            <![CDATA[,answer_analysis]]>
+		</if>
+		<if test="fillSourse != null">
+            <![CDATA[,question_source]]>
+		</if>
+		<if test="knowledgeBegin != null">
+            <![CDATA[,knowledge_begin]]>
+		</if>
+		<if test="typeId != null">
+            <![CDATA[,type_id]]>
+		</if>
+		)
+		values(#{createTime},#{fillTitle},#{fillAnswer},#{subject},#{knowledge},
+		#{questionDegree},#{type},#{tagId},#{teacherId},#{usedCount},#{isPublic},#{isRemove}
+		<if test="answerAnalysis != null and answerAnalysis != ''">
+            <![CDATA[,#{answerAnalysis}]]>
+		</if>
+		<if test="fillSourse != null">
+            <![CDATA[,#{fillSourse}]]>
+		</if>
+		<if test="knowledgeBegin != null">
+            <![CDATA[,#{knowledgeBegin}]]>
+		</if>
+		<if test="typeId != null">
+            <![CDATA[,#{typeId}]]>
+		</if>
+		)
+	</insert>
+
+	<!-- 后台填空题列表 -->
+	<select id="QuestionFillList" resultMap="QuestionFillMap">
+		select * from tb_question_fill qjj
+		 left join tb_subject s on qjj.subject=s.subject_id
+		LEFT JOIN tb_teacher t ON qjj.teacher_id=t.teacher_id
+		left join tb_grade g on qjj.knowledge=g.grade_id
+		where is_remove &lt;&gt;1
+		<if test="handoutType != null and handoutType != ''">
+			and qjj.question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and qjj.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qjj.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and qjj.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qjj.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qjj.knowledge=#{gradeId}
+		</if>
+		order by qjj.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<!-- 没权限，自己读自己的 -->
+	<select id="getPrivateQuestionFillList" resultMap="QuestionFillMap">
+		select * from tb_question_fill qjj 
+		left join tb_subject s on qjj.subject=s.subject_id
+		LEFT JOIN tb_teacher t ON qjj.teacher_id=t.teacher_id
+		left join tb_grade g on qjj.knowledge=g.grade_id
+		where qjj.teacher_id=#{teacherId} and qjj.is_remove &lt;&gt;1
+		<if test="handoutType != null and handoutType != ''">
+			and qjj.question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and qjj.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qjj.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId !=null and tagId !=''">
+			and qjj.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qjj.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qjj.knowledge=#{gradeId}
+		</if>
+		order by qjj.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<!-- 有部分权限自己读自己的 和别人公开的 -->
+	<select id="getPublicQuestionFillList" resultMap="QuestionFillMap">
+		select * from tb_question_fill qjj 
+		left join tb_subject s on qjj.subject=s.subject_id
+		LEFT JOIN tb_teacher t ON qjj.teacher_id=t.teacher_id
+		left join tb_grade g on qjj.knowledge=g.grade_id
+		where (qjj.teacher_id=#{teacherId} or qjj.is_public=1) and qjj.is_remove &lt;&gt;1
+		<if test="handoutType != null and handoutType != ''">
+			and qjj.question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and qjj.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qjj.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and qjj.tag_id REGEXP '(^|,)${tagId}($|,)';
+		</if>
+		<if test="isPublic != null">
+			and qjj.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qjj.knowledge=#{gradeId}
+		</if>
+		order by qjj.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+
+	<update id="updateIsPublic" parameterType="com.db.entity.QuestionFill">
+		update tb_question_fill
+		<set>
+			update_time=#{updateTime}
+			<if test="isPublic != null ">
+				,is_public=#{isPublic}
+			</if>
+			<if test="usedCount != null ">
+				,used_count=#{usedCount}
+			</if>
+		</set>
+		where fill_id=#{fillId}
+	</update>
+	<update id="falseDeleteFill" parameterType="com.db.entity.QuestionFill">
+		update tb_question_fill set is_remove=1 where fill_id=#{fillId}
+	</update>
+	<update id="updateQuestionFill" parameterType="com.db.entity.QuestionFill">
+		update tb_question_fill
+		<set>
+			update_time=#{updateTime}
+			<if test="fillTitle != null and fillTitle !=''">
+				,fill_title=#{fillTitle}
+			</if>
+			<if test="fillAnswer != null and fillAnswer !=''">
+				,fill_answer=#{fillAnswer}
+			</if>
+			<if test="answerAnalysis != null and answerAnalysis !=''">
+				,answer_analysis=#{answerAnalysis}
+			</if>
+			<if test="tagId != null">
+				,tag_id=#{tagId}
+			</if>
+			<if test="subject != null">
+				,subject=#{subject}
+			</if>
+			<if test="knowledge != null">
+				,knowledge=#{knowledge}
+			</if>
+			<if test="knowledgeBegin != null">
+				,knowledge_begin=#{knowledgeBegin}
+			</if>
+			<if test="questionDegree != null">
+				,question_degree=#{questionDegree}
+			</if>
+			<if test="type != null">
+				,question_type=#{type}
+			</if>
+			<if test="fillSourse != null">
+				,question_source=#{fillSourse}
+			</if>
+			<if test="typeId != null">
+				,type_id=#{typeId}
+			</if>
+		</set>
+		where fill_id=#{fillId}
+	</update>
+
+	<select id="getFillByRandAdmin" resultMap="QuestionFillMap">
+		select * from tb_question_fill tqs left join tb_questions_type
+		tqt on tqs.question_type=tqt.topic_id
+		where tqs.is_remove &lt;&gt;1
+		<if test="type !=null">
+			and tqs.question_type=#{type}
+		</if>
+		<if test="subject!=null">
+			and tqs.subject=#{subject}
+		</if>
+		<choose>
+			<when test="tags10!=null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags8}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags9}','%')
+			    OR tqs.tag_id LIKE CONCAT('%','${tags10}','%'))
+			</when>
+			<when test="tags9!=null and tags10==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags8}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags9}','%'))
+			</when>
+			<when test="tags8!=null and tags9==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags8}','%'))
+			</when>
+			<when test="tags7!=null and tags8==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%'))
+			</when>
+			<when test="tags6!=null and tags7==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%')
+			    OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%'))
+			</when>
+			<when test="tags5!=null and tags6==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%'))
+			</when>
+			<when test="tags4!=null and tags5==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%'))
+			</when>
+			<when test="tags3!=null and tags4==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%'))
+			</when>
+			<when test="tags2!=null and tags3==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%'))
+			</when>
+			<when test="tags1!=null and tags2==null">
+				AND tqs.tag_id LIKE CONCAT('%','${tags1}','%')
+			</when>
+		</choose>
+		<if test="grade !=null">
+			and tqs.knowledge=#{grade}
+		</if>
+		<if test="science !=null">
+			and tqs.question_degree=#{science}
+		</if>
+		order by rand() limit #{number};
+	</select>
+
+	<select id="getFillAdminIsPublic" resultMap="QuestionFillMap">
+		select * from tb_question_fill tqs left join tb_questions_type
+		tqt on tqs.question_type=tqt.topic_id
+		where tqs.teacher_id=#{teacherId} and tqs.is_remove &lt;&gt;1
+		<if test="type !=null">
+			and tqs.question_type=#{type}
+		</if>
+		<if test="subject!=null">
+			and tqs.subject=#{subject}
+		</if>
+				<choose>
+			<when test="tags10!=null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags8}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags9}','%')
+			    OR tqs.tag_id LIKE CONCAT('%','${tags10}','%'))
+			</when>
+			<when test="tags9!=null and tags10==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags8}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags9}','%'))
+			</when>
+			<when test="tags8!=null and tags9==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags8}','%'))
+			</when>
+			<when test="tags7!=null and tags8==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags7}','%'))
+			</when>
+			<when test="tags6!=null and tags7==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%')
+			    OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags6}','%'))
+			</when>
+			<when test="tags5!=null and tags6==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags5}','%'))
+			</when>
+			<when test="tags4!=null and tags5==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags4}','%'))
+			</when>
+			<when test="tags3!=null and tags4==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%')
+				OR tqs.tag_id LIKE CONCAT('%','${tags3}','%'))
+			</when>
+			<when test="tags2!=null and tags3==null">
+				AND (tqs.tag_id LIKE CONCAT('%','${tags1}','%') 
+				OR tqs.tag_id LIKE CONCAT('%','${tags2}','%'))
+			</when>
+			<when test="tags1!=null and tags2==null">
+				AND tqs.tag_id LIKE CONCAT('%','${tags1}','%')
+			</when>
+		</choose>
+
+		<if test="grade !=null">
+			and tqs.knowledge=#{grade}
+		</if>
+		<if test="science !=null">
+			and tqs.question_degree=#{science}
+		</if>
+		order by rand() limit #{number};
+	</select>
+	<select id="findPaperInfoDetails" resultMap="QuestionFillMap">
+		select * from
+		tb_paper_details h left join tb_question_fill q on
+		h.question_id=q.fill_id
+		where h.paper_id=#{paperId} and
+		h.question_type=6
+	</select>
+	<select id="findHomeworkDetails" resultMap="QuestionFillMap">
+		select * from
+		td_homework_details h left join tb_question_fill q on
+		h.question_id=q.fill_id
+		where h.paper_id=#{paperId} and
+		h.question_type=6
+	</select>
+	<!-- 前段那试卷列表 -->
+	<select id="thePapersById" resultMap="QuestionFillMap">
+	select * from
+	tb_paper_details mp right join tb_question_fill q on
+	mp.question_id=q.fill_id LEFT JOIN tb_questions_type tqt ON
+	mp.question_type=tqt.topic_id
+	left join tb_question_fill_type ft on q.type_id=ft.type_id
+	where mp.paper_id=#{paperId} and
+	mp.question_type=6
+	<if test="pageNo != null and pageSize != null">
+		limit #{pageNo},#{pageSize}
+	</if>
+	</select>
+	
+	<!-- 前段那作业列表 -->
+	<select id="theHomeworkById" resultMap="QuestionFillMap">
+		select * from
+		td_homework_details mp right join tb_question_fill q on
+		mp.question_id=q.fill_id LEFT JOIN tb_questions_type tqt ON
+		mp.question_type=tqt.topic_id
+		left join tb_question_fill_type ft on q.type_id=ft.type_id
+		where mp.paper_id=#{paperId} and
+		mp.question_type=#{type} 
+		<if test="pageNo != null and pageSize != null">
+		limit #{pageNo},#{pageSize}
+	  </if>
+	</select>
+	<!-- 拿试卷 详情-->
+	<select id="thePapersAnswerById" resultMap="QuestionFillMap">
+		SELECT * FROM td_paper_answer pa left join tb_questions_type qt on
+		pa.question_type=qt.topic_id
+		RIGHT JOIN tb_question_fill qs ON
+		pa.question_id=qs.fill_id
+		WHERE
+		pa.student_id=#{0} AND pa.paper_id=#{1} AND pa.question_type=#{2}
+		limit #{3},#{4}
+	</select>
+	<!-- 拿作业详情-->
+	<select id="theHomeworkAnswerById" resultMap="QuestionFillMap">
+		SELECT * FROM td_homework_answer pa left join tb_questions_type qt on
+		pa.question_type=qt.topic_id
+		RIGHT JOIN tb_question_fill qs ON
+		pa.question_id=qs.fill_id
+		left join tb_question_fill_type ft on qs.type_id=ft.type_id
+		WHERE
+		pa.student_id=#{0} AND pa.paper_id=#{1} AND pa.question_type=#{2}
+		limit #{3},#{4}
+	</select>
+	<select id="getReadTageId" resultMap="QuestionFillMap">
+		select * from tb_question_fill where tag_id like CONCAT
+		('%','${tagId}','%') and is_remove&lt;&gt;1
+	</select>
+	<!--只能查看自己的  -->
+	<select id="getPrivateFillCount" resultType="int">
+	 select count(*) from tb_question_fill qjj 
+	 where qjj.teacher_id=#{teacherId} and qjj.is_remove &lt;&gt;1
+	 <if test="handoutType != null">
+			and qjj.question_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and qjj.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qjj.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId !=null and tagId !=''">
+			and qjj.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qjj.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qjj.knowledge=#{gradeId}
+		</if>
+	</select>
+	
+	<!--查看自己的和别人公开  -->
+	<select id="getIsPublicCount" resultType="int">
+	 select count(*) from tb_question_fill qjj 
+	 where (qjj.teacher_id=#{teacherId} or qjj.is_public=1) and qjj.is_remove &lt;&gt;1
+	 <if test="handoutType != null">
+			and qjj.question_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and qjj.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qjj.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and qjj.tag_id REGEXP '(^|,)${tagId}($|,)';
+		</if>
+		<if test="isPublic != null">
+			and qjj.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qjj.knowledge=#{gradeId}
+		</if>
+	</select>
+	
+	<!--管理员查看全部  -->
+	<select id="getFillCount" resultType="int">
+	 select count(*) from tb_question_fill qjj 
+	 where qjj.is_remove &lt;&gt;1
+	 <if test="handoutType != null">
+			and qjj.question_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and qjj.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qjj.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and qjj.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qjj.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qjj.knowledge=#{gradeId}
+		</if>
+	</select>
+	
+	<select id="getQuestionFillType" resultMap="QuestionFillMap">
+	  select * from tb_question_fill where type_id=#{typeId}
+	</select>
+	<select id="getQuestionFillTitle" resultMap="QuestionFillMap">
+	 select * from tb_question_fill where fill_title=#{fillTitle}
+	</select>
+</mapper>

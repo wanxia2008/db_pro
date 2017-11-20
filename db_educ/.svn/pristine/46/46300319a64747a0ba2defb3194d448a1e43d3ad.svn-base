@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.GradeService">
+    <resultMap id="GradeMap" type="com.db.entity.Grade">    
+        <result column="grade_id" property="gradeId" jdbcType="INTEGER" />    
+        <result column="grade_name" property="gradeName" jdbcType="VARCHAR" />    
+    </resultMap>    
+
+	<select id="getGrade" resultMap="GradeMap">
+		select * from tb_grade
+	</select>
+	
+	<select id="getGradeByIds" resultMap="GradeMap">
+		select * from tb_grade where grade_id in 
+		 <foreach item="listGrades" collection="list" 
+		 	open="(" separator="," close=")">  
+ 			 #{listGrades}
+ 		</foreach>
+	</select>
+	
+	<select id="getGradeById" resultMap="GradeMap">
+		select * from tb_grade where grade_id=#{gradeId};
+	</select>
+	<select id="findGradeList" resultMap="GradeMap">
+	select * from tb_grade where 1=1 
+	   order by grade_id asc limit #{pageNo},#{pageSize}
+	</select>
+</mapper>

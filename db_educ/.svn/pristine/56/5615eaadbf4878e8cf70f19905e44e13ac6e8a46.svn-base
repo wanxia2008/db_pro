@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.LectureNotesService">
+	<resultMap id="LectureNotesMap" type="com.db.entity.LectureNotes">
+		<result column="handout_id" property="handoutId" jdbcType="INTEGER" />
+		<result column="handout_title" property="handoutTitle"
+			jdbcType="VARCHAR" />
+		<result column="handout_content" property="handoutContent"
+			jdbcType="VARCHAR" />
+		<result column="material_science" property="materialScience"
+			jdbcType="INTEGER" />
+		<result column="handout_type" property="handoutType" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER" />
+		<result column="class_no" property="classNo" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="knowledge_begin" property="knowledgeBegin"
+			jdbcType="INTEGER" />
+		<result column="knowledge_end" property="knowledgeEnd"
+			jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="INTEGER" />
+		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="used_count" property="usedCount" jdbcType="INTEGER" />
+		<result column="word_route" property="wordRoute" jdbcType="VARCHAR" />
+		<result column="word_pdf_route" property="wordpdfRoute" jdbcType="VARCHAR"/>
+		<result column="ppt_route" property="pptRoute" jdbcType="VARCHAR" />
+		<result column="is_start" property="isStart" jdbcType="INTEGER"/>
+		<result column="upload_type" property="uploadType" jdbcType="VARCHAR" />
+		<association property="subName" javaType="com.db.entity.Subject">
+			<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+			<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		</association>
+
+		<association property="stName" javaType="com.db.entity.SeasonType">
+			<id column="season_id" property="seasonId" jdbcType="INTEGER" />
+			<result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="teacher" javaType="com.db.entity.Teacher">
+			<id column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="grades" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+
+
+
+
+	<!-- 后台我的讲义列表 -->
+	<select id="lectureNotesByIdList" resultMap="LectureNotesMap">
+		select * from tb_lecture_notes l 
+		left join tb_subject s on l.subject=s.subject_id
+		left join tb_grade g on l.grade=g.grade_id
+		left join tb_season_type st on l.handout_type=st.season_id 
+		left join tb_teacher t on l.create_user=t.teacher_id
+		where l.create_user=#{teacherId}
+		<!-- 模糊查询 -->
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and l.handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null and handoutType != '' ">
+			and l.handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and l.subject=#{subject}
+		</if>
+		<if test="isPublic != null">
+			and l.is_public=#{isPublic}
+		</if>
+		<if test="grade != null">
+			and l.grade=#{grade}
+		</if>
+		order by l.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<select id="lectureNotesIsPublicByIdList" resultMap="LectureNotesMap">
+		select * from tb_lecture_notes l 
+		left join tb_subject s on l.subject=s.subject_id
+		left join tb_grade g on l.grade=g.grade_id
+		left join tb_season_type st on l.handout_type=st.season_id 
+		left join tb_teacher t on l.create_user=t.teacher_id
+		where (l.create_user=#{teacherId} or l.is_public=1)
+		<!-- 模糊查询 -->
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and l.handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null and handoutType != '' ">
+			and l.handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and l.subject =#{subject}
+		</if>
+		<if test="isPublic != null">
+			and l.is_public =#{isPublic}
+		</if>
+		<if test="grade != null">
+			and l.grade =#{grade}
+		</if>
+		order by l.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<select id="getCountMunber" resultType="int">
+		select count(*) from tb_lecture_notes where create_user=#{teacherId}
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null and handoutType != '' ">
+			and handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and subject =#{subject}
+		</if>
+		<if test="isPublic != null">
+			and is_public =#{isPublic}
+		</if>
+		<if test="grade != null">
+			and grade =#{grade}
+		</if>
+	</select>
+	<select id="getCountIspublicMunber" resultType="int">
+		select count(*) from tb_lecture_notes where (create_user=#{teacherId}
+		or is_public=1)
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null">
+			and handout_type=#{handoutType}
+		</if>
+		<if test="subject != null ">
+			and subject =#{subject}
+		</if>
+		<if test="isPublic != null ">
+			and is_public=#{isPublic}
+		</if>
+		<if test="grade != null ">
+			and grade=#{grade}
+		</if>
+	</select>
+
+	<!-- 我的讲义列表 -->
+	<select id="lectureNotesList" resultMap="LectureNotesMap">
+		select * from tb_lecture_notes l left join tb_subject s on
+		l.subject=s.subject_id
+		left join tb_season_type st on
+		l.handout_type=st.season_id where
+		l.create_user=#{teacherId}
+		<!-- 模糊查询 -->
+		<!-- <if test="ln.handoutTitle != null and ln.handoutTitle != '' "> and 
+			l.handout_title like CONCAT('%','${ln.handoutTitle}','%') </if> <if test="ln.handoutType 
+			!= null and ln.handoutType != '' "> and l.handout_type=#{ln.handoutType} 
+			</if> <if test="ln.subject != null and ln.subject != '' "> and l.subject=#{ln.subject} 
+			</if> <if test="ln.materialScience != null and ln.materialScience != '' "> 
+			and l.material_science=#{ln.materialScience} </if> <if test="ln.grade != 
+			null and ln.grade != '' "> and l.grade=#{ln.grade} </if> <if test="ln.classNo 
+			!= null and ln.classNo != '' "> and l.class_no=#{ln.classNo} </if> -->
+		order by l.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<select id="getLectureNotes" resultMap="LectureNotesMap">
+		select * from
+		tb_lecture_notes where handout_id=#{handoutId}
+	</select>
+
+	<!-- 添加讲义 -->
+	<insert id="addlectureNotes" parameterType="com.db.entity.LectureNotes">
+		insert into
+		tb_lecture_notes(handout_title,subject,grade,create_time,create_user,is_public,used_count
+		<if test="handoutContent!=null and handoutContent!=''">
+    <![CDATA[,handout_content]]>
+		</if>
+		<if test="handoutType != null">
+    <![CDATA[,handout_type]]>
+		</if>
+		<if test="materialScience != null">
+    <![CDATA[,material_science]]>
+		</if>
+		<if test="classNo!=null and classNo!=''">
+     <![CDATA[,class_no]]>
+		</if>
+		<if test="knowledgeBegin!=null and knowledgeBegin!=''">
+     <![CDATA[,knowledge_begin]]>
+		</if>
+		<if test="knowledgeEnd!=null and knowledgeEnd!=''">
+     <![CDATA[,knowledge_end]]>
+		</if>
+		<if test="wordRoute !=null and wordRoute !=''">
+     <![CDATA[,word_route]]>
+		</if>
+		<if test="wordpdfRoute !=null and wordpdfRoute !=''">
+		  <![CDATA[,word_pdf_route]]>
+		</if>
+		<if test="pptRoute !=null and pptRoute !=''">
+     <![CDATA[,ppt_route]]>
+		</if>
+		)
+		values(#{handoutTitle},#{subject},#{grade},#{createTime},#{createUser},#{isPublic},#{usedCount}
+		<if test="handoutContent!=null and handoutContent!=''">
+    <![CDATA[,#{handoutContent}]]>
+		</if>
+		<if test="handoutType != null">
+    <![CDATA[,#{handoutType}]]>
+		</if>
+		<if test="materialScience != null">
+    <![CDATA[,#{materialScience}]]>
+		</if>
+		<if test="classNo!=null and classNo!=''">
+     <![CDATA[,#{classNo}]]>
+		</if>
+		<if test="knowledgeBegin!=null and knowledgeBegin!=''">
+     <![CDATA[,#{knowledgeBegin}]]>
+		</if>
+		<if test="knowledgeEnd!=null and knowledgeEnd!=''">
+     <![CDATA[,#{knowledgeEnd}]]>
+		</if>
+		<if test="wordRoute !=null and wordRoute !=''">
+     <![CDATA[,#{wordRoute}]]>
+		</if>
+		<if test="wordpdfRoute !=null and wordpdfRoute !=''">
+     <![CDATA[,#{wordpdfRoute}]]>
+		</if>
+		<if test="pptRoute !=null and pptRoute !=''">
+     <![CDATA[,#{pptRoute}]]>
+		</if>
+		)
+	</insert>
+	<!--删除讲义 -->
+	<delete id="deleteLectureNote" parameterType="java.lang.Integer">
+		delete from
+		tb_lecture_notes where handout_id=#{handoutId}
+	</delete>
+
+	<!-- 修改讲义 -->
+	<update id="updateNotes" parameterType="com.db.entity.LectureNotes">
+		update tb_lecture_notes
+		<set>
+			handout_title=#{handoutTitle}
+			,grade=#{grade}
+			,subject=#{subject}
+			,material_science=#{materialScience}
+			<if test="isPublic != null">
+				,is_public=#{isPublic}
+			</if>
+			<if test="handoutContent != null and handoutContent!=''">
+				,handout_content=#{handoutContent}
+			</if>
+			<if test="wordRoute != null and wordRoute !=''">
+				,word_route=#{wordRoute}
+			</if>
+			<if test="wordpdfRoute != null and wordpdfRoute !=''">
+				,word_pdf_route=#{wordpdfRoute}
+			</if>
+			<if test="pptRoute != null and pptRoute !=''">
+				,ppt_route=#{pptRoute}
+			</if>
+			<if test="handoutType != null">
+				,handout_type=#{handoutType}
+			</if>
+		</set>
+		where handout_id=#{handoutId}
+	</update>
+	<update id="updateUsedCount" parameterType="com.db.entity.LectureNotes">
+		update
+		tb_lecture_notes set used_count=#{usedCount} where
+		handout_id=#{handoutId}
+	</update>
+	<!-- 分页 -->
+	<select id="flip" resultType="com.db.entity.LectureNotes">
+		select * from tb_lecture_notes
+		order by create_time desc limit #{page},1
+	</select>
+	<select id="getCount" resultType="int">
+		select COUNT(handout_id) from tb_lecture_notes where 1=1
+		<if test="handoutTitle != null and handoutTitle != ''">
+			and handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="subject != null and subject != ''">
+			and subject=#{subject}
+		</if>
+		<if test="handoutType != null and handoutType != ''">
+			and handout_type=#{handoutType}
+		</if>
+		<if test="materialScience != null and materialScience != ''">
+			and material_science=#{materialScience}
+		</if>
+		<if test="grade != null and grade != ''">
+			and grade=#{grade}
+		</if>
+		<if test="classNo != null and classNo != ''">
+			and class_no=#{classNo}
+		</if>
+	</select>
+	<update id="updateIsPublic" parameterType="com.db.entity.LectureNotes">
+		update
+		tb_lecture_notes set is_public=#{isPublic} where
+		handout_id=#{handoutId}
+	</update>
+	<update id="updateIsStart" parameterType="com.db.entity.LectureNotes">
+	    update tb_lecture_notes set is_start = #{isStart} where handout_id = #{handoutId}
+	</update>
+	<select id="getNotesSubject" resultMap="LectureNotesMap">
+		select * from
+		tb_lecture_notes l left join tb_subject s on
+		l.subject=s.subject_id
+		where l.handout_id=#{handoutId}
+	</select>
+	<!-- 获取公开的讲义列表 -->
+	<select id="getPublicNote" resultMap="LectureNotesMap">
+		select * from
+		tb_lecture_notes l left join tb_subject s on
+		l.subject=s.subject_id
+		left join tb_grade g on l.grade=g.grade_id
+		where
+		(l.create_user=#{createUser} or l.is_public=1) and l.is_start = 1
+		<if test="subjectId != null">
+			and l.subject=#{subjectId}
+		</if>
+		<if test="gradeId != null">
+			and l.grade=#{gradeId}
+		</if>
+		order by l.create_time desc limit #{pageNo},#{pageSize};
+	</select>
+
+	<select id="getPublicNoteCount" resultType="long">
+		select count(*) from
+		tb_lecture_notes where (create_user=#{createUser}
+		or is_public=1 ) and is_start = 1
+		<if test="subjectId != null">
+			and subject=#{subjectId}
+		</if>
+		<if test="gradeId != null">
+			and grade=#{gradeId};
+		</if>
+	</select>
+	<select id="getLectuseTitle" resultMap="LectureNotesMap">
+		select * from
+		tb_lecture_notes where handout_title=#{handoutTitle}
+	</select>
+     
+     <select id="seeCountIspublicMunber1" resultType="int">
+		select count(*) from tb_lecture_notes where 1=1
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null">
+			and handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and subject =#{subject}
+		</if>
+		<if test="isPublic != null">
+			and is_public =#{isPublic}
+		</if>
+		<if test="grade != null">
+			and grade =#{grade}
+		</if>
+	</select>
+     
+	<select id="seeCountIspublicMunber" resultType="int">
+		select count(*) from tb_lecture_notes where is_start=1
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null">
+			and handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and subject =#{subject}
+		</if>
+		<if test="isPublic != null">
+			and is_public =#{isPublic}
+		</if>
+		<if test="grade != null">
+			and grade =#{grade}
+		</if>
+	</select>
+	
+	<select id="seelectureNotesIsPublicByIdList1" resultMap="LectureNotesMap">
+		select * from tb_lecture_notes l 
+		left join tb_subject s on l.subject=s.subject_id
+		left join tb_grade g on l.grade=g.grade_id
+		left join tb_season_type st on l.handout_type=st.season_id 
+		left join tb_teacher t on l.create_user=t.teacher_id
+		where 1=1 
+		<!-- 模糊查询 -->
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and l.handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null ">
+			and l.handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and l.subject =#{subject}
+		</if>
+		<if test="isPublic != null">
+			and l.is_public =#{isPublic}
+		</if>
+		<if test="grade != null">
+			and l.grade =#{grade}
+		</if>
+		order by l.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	
+	<select id="seelectureNotesIsPublicByIdList" resultMap="LectureNotesMap">
+		select * from tb_lecture_notes l 
+		left join tb_subject s on l.subject=s.subject_id
+		left join tb_grade g on l.grade=g.grade_id
+		left join tb_season_type st on l.handout_type=st.season_id 
+		left join tb_teacher t on l.create_user=t.teacher_id
+		where 1=1 and l.is_start = 1
+		<!-- 模糊查询 -->
+		<if test="handoutTitle != null and handoutTitle != '' ">
+			and l.handout_title like CONCAT('%','${handoutTitle}','%')
+		</if>
+		<if test="handoutType != null ">
+			and l.handout_type=#{handoutType}
+		</if>
+		<if test="subject != null">
+			and l.subject =#{subject}
+		</if>
+		<if test="isPublic != null">
+			and l.is_public =#{isPublic}
+		</if>
+		<if test="grade != null">
+			and l.grade =#{grade}
+		</if>
+		order by l.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<select id="getSubjectById" resultMap="LectureNotesMap">
+		select * from
+		tb_lecture_notes where subject=#{subjectId}
+	</select>
+</mapper>

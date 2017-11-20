@@ -1,0 +1,52 @@
+﻿/** 
+ 
+ @Name: layer皮肤--教务宝项目--询问层
+ @Date: 2016.04.02
+ @Author: 高同檩
+ @remark:
+    1.新增flat风格图标，替换layer默认图标，新图标大小为35*35, 垂直间隔10;
+
+**/
+
+/* 必须要设置的全局属性 */
+html #layui_layer_skinjwb_askstylecss{display:none; position: absolute; width:1989px;}
+
+/* 控制图文部分的居中 */
+/*body .layer-ext-jwb_ask.layui-layer-dialog{text-align: center;}*/
+
+/* 标题部分 */
+body .layer-ext-jwb_ask .layui-layer-title{height: 51px; line-height: 51px; background:#fff; font-size: 16px; color:#000; text-align: left; border-bottom: 1px #cfcfcf solid; padding-left:20px;}
+
+/* 内容部分--图标样式设置 */
+body .layer-ext-jwb_ask .layui-layer-content{padding: 0;}
+/*设置边界*/
+/*body .layer-ext-jwb_ask .layui-layer-padding{padding: 0; margin: 60px 0 50px 0;}*/
+
+/* i标签 图标包裹容器 */
+/*body .layer-ext-jwb_ask .layui-layer-content .layui-layer-ico{width:35px; height:35px;position: static;float: left;}*/
+
+/* msg方法样式 */
+/*body .layer-ext-jwb_ask.layui-layer-msg {border:none; background-color: rgba(0, 0, 0, 0.6);}*/
+/*body .layer-ext-jwb_ask.layui-layer-msg .layui-layer-content{display: block; height:20px; line-height: 20px; color: #fff; text-indent: 0; background: none;}*/
+
+/* 按钮样式 */
+body .layer-ext-jwb_ask .layui-layer-btn{text-align: center; padding:10px 0 35px 0;}
+body .layer-ext-jwb_ask .layui-layer-btn a{width: 98px; height: 25px; line-height: 25px; border-radius: 0px; font-size: 12px; color: #fff; display: inline-block; border: none; padding: 0; margin: 0 9px;}
+body .layer-ext-jwb_ask .layui-layer-btn .layui-layer-btn0{background: #27b2fb;}
+body .layer-ext-jwb_ask .layui-layer-btn .layui-layer-btn1{background: #ff4a3f;}
+
+/* 关闭按钮样式 */
+body .layer-ext-jwb_ask .layui-layer-setwin{right:20px;top:18px;}
+body .layer-ext-jwb_ask .layui-layer-setwin .layui-layer-close{background: url(shut_icon.png) no-repeat center center !important;}
+
+/* 底部遮罩层样式 */
+.layui-layer-shade{background-color: #192942 !important;opacity:0.6 !important; filter:alpha(opacity=60) !important;}
+
+/* 自定义样式 */
+/*询问框*/
+body .layer-ext-jwb_ask .ask_infor{font-size: 14px; color: #192942; text-align: center;padding: 65px 0 0 0;}
+/* 修饰图片 */
+/*body .layer-ext-jwb_ask .layui-layer-ico0{background:url(default.png) no-repeat 0 -10px;}
+body .layer-ext-jwb_ask .layui-layer-ico1{background:url(default.png) no-repeat 0 -55px;}
+body .layer-ext-jwb_ask .layui-layer-ico2{background:url(default.png) no-repeat 0 -100px;}
+body .layer-ext-jwb_ask .layui-layer-ico3{background:url(default.png) no-repeat 0 -145px;}*/

@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.StudentService">
+	<resultMap type="com.db.entity.Student" id="BaseResultMap">
+		<result column="student_id" property="studentId" jdbcType="INTEGER" />
+		<result column="student_name" property="studentName" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="year" property="year" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="INTEGER" />
+		<result column="age" property="age" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER" />
+		<result column="class_no" property="classNo" jdbcType="VARCHAR" />
+		<result column="subject_type" property="subjectType" jdbcType="VARCHAR" />
+		<result column="choice_type" property="choiceType" jdbcType="INTEGER" />
+		<result column="student_status" property="studentStatus"
+			jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="custodian1_relationship" property="custodian1Relationship"
+			jdbcType="VARCHAR" />
+		<result column="custodian1_name" property="custodian1Name"
+			jdbcType="VARCHAR" />
+		<result column="custodian1_phone" property="custodian1Phone"
+			jdbcType="VARCHAR" />
+		<result column="custodian2_relationship" property="custodian2Relationship"
+			jdbcType="VARCHAR" />
+		<result column="custodian2_name" property="custodian2Name"
+			jdbcType="VARCHAR" />
+		<result column="custodian2_phone" property="custodian2Phone"
+			jdbcType="VARCHAR" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="head_image" property="headImage" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="attend_school" property="attendSchool"
+			jdbcType="VARCHAR" />
+		<result column="intentional_school" property="intentionalSchool"
+			jdbcType="VARCHAR" />
+		<result column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="pay_type" property="payType" jdbcType="INTEGER" />
+		
+		<association property="testRecord" javaType="com.db.entity.TestRecord">
+			<id column="id" property="id" jdbcType="INTEGER" />
+			<result column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="subject" property="subjectId" jdbcType="INTEGER" />
+			<result column="paper_type" property="paperType" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="status" property="status" jdbcType="INTEGER" />
+				<result column="score" property="score" jdbcType="INTEGER" />
+		</association>
+		
+		<association property="score" javaType="com.db.entity.StudentScore">
+			<id property="score_id" column="scoreId" />
+			<result property="student_id" column="studentId" />
+			<result property="score" column="score" />
+		</association>
+		
+		<association property="subject" javaType="com.db.entity.Subject">
+			<id property="subjectId" column="subject_id" />
+			<result property="subjectName" column="subject_name" />
+		</association>
+		<association property="grade2" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="schoolYear" javaType="com.db.entity.SchoolYear">
+			 <id column="id" property="id" jdbcType="INTEGER" />    
+        <result column="school_year" property="year" jdbcType="INTEGER" /> 
+		</association>
+		
+		<association property="seasonType" javaType="com.db.entity.SeasonType">
+			<id property="seasonId" column="season_id" />
+			<result property="seasonName" column="season_name" />
+		</association>
+		
+		<association property="classNo2" javaType="com.db.entity.ClassNo">
+			<id property="classId" column="class_id" />
+			<result property="year" column="year" />
+			<result property="seasonType" column="season_type" />
+			<result property="subject" column="subject" />
+			<result property="grade" column="grade" />
+			<result property="className" column="class_name" />
+			<result property="classType" column="class_type" />
+			<result property="classNumber" column="class_number" />
+			<result property="remarks" column="remarks" />
+			<result property="createTime" column="create_time" />
+			<result property="updateTime" column="update_time" />
+			<result property="roomId" column="room_id" />
+			<result property="schoolArea" column="school_area" />
+		</association>
+		
+		<association property="schoolZone" javaType="com.db.entity.SchoolZone">
+		   <id column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		</association>
+		
+		
+		
+		<collection property="scorelist" resultMap="ScoreMap"></collection>
+	</resultMap>
+
+	<resultMap type="com.db.entity.Score" id="ScoreMap">
+		<id column="score_id" property="scoreId" jdbcType="INTEGER" />
+		<result column="student_id" property="studentId" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="FLOAT" />
+		<result column="pi_id" property="piId" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="getAllStudent" parameterType="Integer" resultMap="BaseResultMap">
+		select * from tb_student where school_id=#{schoolId} limit #{pageNo},#{pageSize};
+	</select>
+
+	<select id="getStudentByParam"
+		resultMap="BaseResultMap">
+		select td.*,ts.score from tb_student td left join tb_score
+		ts on td.student_id=ts.student_id
+		<where>
+			<if test="subject !=null and subject !=''">
+				and td.subject_type like CONCAT('%','${subject}','%')
+			</if>
+			<if test="gradeid !=null and gradeid !=''">
+				and td.grade=#{gradeid}
+			</if>
+			<if test="status !=null and status !=''">
+				and td.student_status in (3,4,5)<!-- 未分班已分班已结束课程都可以再给其他班录入，只要课程年级对应 -->
+			</if>
+			<if test="seasonid !=null and seasonid !=''">
+				and td.choice_type=#{seasonid}
+			</if>
+			<if test="year !=null and year !=''">
+				and td.year=#{year}
+			</if>
+			<if test="content !=null and content !=''">
+				and td.student_name like '%${content}%'
+			</if>
+		</where>
+		limit
+		#{pageNo},#{pageSize};
+	</select>
+	
+	<select id="getStudentByParamCount"
+		resultType="long">
+		select count(*) from tb_student td
+		<where>
+			<if test="subject !=null and subject !=''">
+				and td.subject_type like CONCAT('%','${subject}','%')
+			</if>
+			<if test="gradeid !=null and gradeid !=''">
+				and td.grade=#{gradeid}
+			</if>
+			<if test="status !=null and status !=''">
+				and td.student_status in (3,4,5)<!-- 未分班已分班已结束课程都可以再给其他班录入，只要课程年级对应 -->
+			</if>
+			<if test="seasonid !=null and seasonid !=''">
+				and td.choice_type=#{seasonid}
+			</if>
+			<if test="year !=null and year !=''">
+				and td.year=#{year}
+			</if>
+			<if test="content !=null and content !=''">
+				and td.student_name like '%${content}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="getStudentByUserName" resultMap="BaseResultMap"
+		parameterType="String">
+		select * from tb_student where user_name=#{userName} or phone=#{userName}
+	</select>
+	<select id="getStudentById" resultMap="BaseResultMap"
+		parameterType="Integer">
+		select * from tb_student where student_id=#{studentId}
+	</select>
+
+	<select id="getStudentByClassnoId" parameterType="String"
+		resultMap="BaseResultMap">
+		select td.*,ts.score from tb_student td left join tb_score
+		ts on
+		td.student_id=ts.student_id where class_no REGEXP '(^|,)${classNo}($|,)';
+	</select>
+
+	<select id="getCount" resultType="long">
+		select count(*) from
+		tb_student;
+	</select>
+
+	<insert id="addNewStudent" parameterType="com.db.entity.Student"
+		useGeneratedKeys="true" keyProperty="studentId">
+		insert into
+		tb_student(user_name,student_name,password,student_status,create_time,status
+		<if test="year!=null and year!=''"> 
+			<![CDATA[,year]]>
+		</if>
+		<if test="sex!=null and sex!=''"> 
+			<![CDATA[,sex]]>
+		</if>
+		<if test="age!=null and age!=''"> 
+			<![CDATA[,age]]>
+		</if>
+		<if test="grade!=null and grade!=''"> 
+			<![CDATA[,grade]]>
+		</if>
+		<if test="classNo!=null and classNo!=''">
+			<![CDATA[,class_no]]>
+		</if>
+		<if test="subjectType!=null 
+			and subjectType!=''"> 
+			<![CDATA[,subject_type]]>
+		</if>
+		<if test="choiceType!=null 
+			and choiceType!=''"> 
+			<![CDATA[,choice_type]]>
+		</if>
+		<if test="custodian1Relationship!=null 
+			and custodian1Relationship!=''"> 
+			<![CDATA[,custodian1_relationship]]>
+		</if>
+		<if test="custodian1Name!=null and custodian1Name!=''"> 
+			<![CDATA[,custodian1_name]]>
+		</if>
+		<if test="custodian1Phone!=null and custodian1Phone!=''"> 
+			<![CDATA[,custodian1_phone]]>
+		</if>
+		<if test="custodian2Relationship!=null and custodian2Relationship!=''"> 
+			<![CDATA[,custodian2_relationship]]>
+		</if>
+		<if test="custodian2Name!=null 
+			and custodian2Name!=''"> 
+			<![CDATA[,custodian2_name]]>
+		</if>
+		<if test="custodian2Phone!=null 
+			and custodian2Phone!=''"> 
+			<![CDATA[,custodian2_phone]]>
+		</if>
+		<if test="schoolId!=null and schoolId!=''"> 
+			<![CDATA[,school_id]]>
+		</if>
+		<if test="phone !=null and phone !=''"> 
+			<![CDATA[,phone]]>
+		</if>
+		<if test="attendSchool !=null and attendSchool !=''"> 
+			<![CDATA[,attend_school]]>
+		</if>
+		<if test="intentionalSchool !=null and intentionalSchool !=''"> 
+			<![CDATA[,intentional_school]]>
+		</if>
+		
+		) values
+		(#{userName},#{studentName},#{password},#{studentStatus},#{createTime},#{status}
+		<if test="year!=null and year!=''"> 
+			<![CDATA[,#{year}]]>
+		</if>
+		<if test="sex!=null and sex!=''"> 
+			<![CDATA[,#{sex}]]>
+		</if>
+		<if test="age!=null and age!=''"> 
+			<![CDATA[,#{age}]]>
+		</if>
+		<if test="grade!=null and grade!=''"> 
+			<![CDATA[,#{grade}]]>
+		</if>
+		<if test="classNo!=null and classNo!=''"> 
+			<![CDATA[,#{classNo}]]>
+		</if>
+		<if test="subjectType!=null and subjectType!=''"> 
+			<![CDATA[,#{subjectType}]]>
+		</if>
+		<if test="choiceType!=null and choiceType!=''"> 
+			<![CDATA[,#{choiceType}]]>
+		</if>
+		<if test="custodian1Relationship!=null and custodian1Relationship!=''"> 
+			<![CDATA[,#{custodian1Relationship}]]>
+		</if>
+		<if test="custodian1Name!=null 
+			and custodian1Name!=''"> 
+			<![CDATA[,#{custodian1Name}]]>
+		</if>
+		<if test="custodian1Phone!=null 
+			and custodian1Phone!=''"> 
+			<![CDATA[,#{custodian1Phone}]]>
+		</if>
+		<if test="custodian2Relationship!=null 
+			and custodian2Relationship!=''"> 
+			<![CDATA[,#{custodian2Relationship}]]>
+		</if>
+		<if test="custodian2Name!=null and custodian2Name!=''"> 
+			<![CDATA[,#{custodian2Name}]]>
+		</if>
+		<if test="custodian2Phone!=null and custodian2Phone!=''"> 
+			<![CDATA[,#{custodian2Phone}]]>
+		</if>
+		<if test="schoolId!=null and schoolId!=''"> 
+			<![CDATA[,#{schoolId}]]>
+		</if>
+		<if test="phone !=null and phone !=''"> 
+			<![CDATA[,#{phone}]]>
+		</if>
+		<if test="attendSchool !=null and attendSchool !=''"> 
+			<![CDATA[,#{attendSchool}]]>
+		</if>
+		<if test="intentionalSchool !=null and intentionalSchool !=''"> 
+			<![CDATA[,#{intentionalSchool}]]>
+		</if>
+		)
+
+	</insert>
+<!-- ,password=#{
+			password} -->
+	<update id="updateStudent" parameterType="com.db.entity.Student">
+		update tb_student
+		<set>
+			student_name=#{studentName},year=#{year},sex=#{sex},age=#{age},student_status=#{
+			studentStatus},update_time=#{updateTime},school_id=#{schoolId}
+			<if test="grade!=null and grade!=''">
+				,grade=#{grade}
+			</if>
+			<if test="classNo!=null and classNo!=''">
+				,class_no=#{classNo}
+			</if>
+			<if test="subjectType!=null and subjectType!=''">
+				,subject_type=#{subjectType}
+			</if>
+			<if test="choiceType!=null and choiceType!=''">
+				,choice_type=#{choiceType}
+			</if>
+			<if test="custodian1Relationship!=null and custodian1Relationship!=''">
+				,custodian1_relationship=#{custodian1Relationship}
+			</if>
+			<if test="custodian1Name!=null and custodian1Name!=''">
+				,custodian1_name=#{custodian1Name}
+			</if>
+			<if test="custodian1Phone!=null and custodian1Phone!=''">
+				,custodian1_phone=#{custodian1Phone}
+			</if>
+			<if test="custodian2Relationship!=null and custodian2Relationship!=''">
+				,custodian2_relationship=#{custodian2Relationship}
+			</if>
+			<if test="custodian2Name!=null and custodian2Name!=''">
+				,custodian2_name=#{custodian2Name}
+			</if>
+			<if test="custodian2Phone!=null and custodian2Phone!=''">
+				,custodian2_phone=#{custodian2Phone}
+			</if>
+			<if test="userName!=null and userName!=''">
+				,user_name=#{userName}
+			</if>
+			<if test="phone !=null and phone !=''"> 
+			,phone=#{phone}
+		</if>
+		<if test="attendSchool !=null and attendSchool !=''"> 
+			,attend_school=#{attendSchool}
+		</if>
+		<if test="intentionalSchool !=null and intentionalSchool !=''"> 
+			,intentional_school=#{intentionalSchool}
+		</if>
+		</set>
+		where student_id=#{studentId};
+	</update>
+
+	<update id="updateStudentStatus" parameterType="com.db.entity.Student">
+	update tb_student
+	<set>
+		update_time=#{updateTime}
+		<if test="studentStatus!=null">
+			,student_status=#{studentStatus}
+		</if>
+		<if test="schoolId !=null">
+			,school_id=#{schoolId}
+		</if>
+		<if test="status != null">
+			,status=#{status}
+		</if>
+	</set>
+	where student_id=#{studentId};
+	</update>
+
+	<update id="updateStudentBySchoolId">
+		update tb_student set 
+		update_time=#{date},school_id=#{schoolId}
+		where student_id=#{studentid};
+	</update>
+
+	<delete id="deleteStudent" parameterType="Integer">
+		delete from tb_student
+		where student_id=#{studentId};
+	</delete>
+	<!-- 前端修改头像 -->
+	<update id="updateStudentById" parameterType="com.db.entity.Student">
+		update tb_student
+		set head_image=#{headImage},update_time=#{updateTime}
+		where
+		student_id=#{studentId}
+	</update>
+	<select id="studentList" resultMap="BaseResultMap">
+		select * from tb_student s
+		left join tb_subject j on s.subject_type=j.subject_id
+		left join tb_season_type t on s.choice_type=t.season_id 
+	    left join tb_grade g on s.grade=g.grade_id
+		where s.student_id=#{studentId}
+	</select>
+	<select id="loginConfirm" resultMap="BaseResultMap">
+		select * from tb_student
+		where phone=#{phone}
+	</select>
+	<update id="updateFillInStudent" parameterType="com.db.entity.Student">
+		update tb_student
+		<set>
+			sex=#{sex},age=#{age},update_time=#{updateTime}
+			<if test="sex != null and sex != ''">
+				,sex=#{sex}
+			</if>
+			<if test="age != null and age != ''">
+				,age=#{age}
+			</if>
+			<if test="grade != null and grade != ''">
+				,grade=#{grade}
+			</if>
+			<if test="schoolId != null and schoolId != ''">
+				,school_id=#{schoolId}
+			</if>
+			<if test="attendSchool != null and attendSchool != ''">
+				,attend_school=#{attendSchool}
+			</if>
+			<if test="intentionalSchool != null and intentionalSchool != ''">
+				,intentional_school=#{intentionalSchool}
+			</if>
+			<if test="subjectType != null and subjectType != ''">
+				,subject_type=#{subjectType}
+			</if>
+		</set>
+		where student_id=#{studentId}
+	</update>
+	<select id="getStudentByPhone" resultMap="BaseResultMap"
+		parameterType="String">
+		select * from tb_student where phone=#{phone}
+	</select>
+
+	<update id="updatePwassword" parameterType="com.db.entity.Student"
+		useGeneratedKeys="true" keyProperty="studentId">
+		update tb_student set
+		password=#{password} where student_id=#{studentId}
+	</update>
+	<!--  COALESCE(count(*),0) -->
+	<select id="getStudentByStatusCount" resultType="long">
+		select count(*) from tb_student ts left join tb_grade tg on
+		ts.grade=tg.grade_id
+	       where 1=1
+			<if test="stulist !='' and stulist != null">
+				and ts.student_id not in 
+				<foreach item="stulist" collection="stulist"
+					open="(" separator="," close=")">
+					#{stulist}
+				</foreach>
+			</if>
+			<if test="schoolId != null">
+				and ts.school_id=#{schoolId}
+			</if>
+			<if test="grade != null">
+				and ts.grade=#{grade}
+			</if>
+			<if test="subject!='' and subject!=null">
+				and ts.subject_type like CONCAT('%','${subject}','%')
+			</if>
+	</select>
+
+	<select id="getStudentByStatus" resultMap="BaseResultMap">
+		select * from tb_student ts left join tb_grade tg on
+		ts.grade=tg.grade_id left join tb_subject sub on ts.subject_type=sub.subject_id
+		 left join tb_school_zone sz on ts.school_id=sz.school_id
+		<where>
+			<if test="stulist !='' and stulist != null">
+				and ts.student_id not in 
+				<foreach item="stulist" collection="stulist"
+					open="(" separator="," close=")">
+					#{stulist}
+				</foreach>
+			</if>
+			<if test="schoolId != null">
+				and ts.school_id=#{schoolId}
+			</if>
+			<if test="grade!='' and grade != null">
+				and ts.grade=#{grade}
+			</if>
+			<if test="subject!='' and subject!=null">
+				and ts.subject_type like CONCAT('%','${subject}','%')
+			</if>
+		</where>
+		order by ts.create_time desc limit #{pageNo},#{pageSize};
+	</select>
+
+	<update id="updateAge" parameterType="com.db.entity.Student">
+		update tb_student set
+		age=#{age},update_time=#{updateTime} where
+		student_id=#{studentId}
+	</update>
+
+	<update id="updateStudentName" parameterType="com.db.entity.Student">
+		update tb_student
+		set student_name=#{studentName},update_time=#{updateTime}
+		where
+		student_id=#{studentId}
+	</update>
+
+	<update id="updatePassword" parameterType="com.db.entity.Student">
+		update tb_student set
+		password=#{password},update_time=#{updateTime} where
+		student_id=#{studentId}
+	</update>
+
+	<update id="updateAttendSchool" parameterType="com.db.entity.Student">
+		update tb_student
+		set
+		attend_school=#{attendSchool},update_time=#{updateTime} where
+		student_id=#{studentId}
+	</update>
+
+	<update id="updateIntentionalSchool" parameterType="com.db.entity.Student">
+		update
+		tb_student set
+		intentional_school=#{intentionalSchool},update_time=#{updateTime}
+		where student_id=#{studentId}
+	</update>
+	<update id="updatePhone" parameterType="com.db.entity.Student">
+		update tb_student set
+		phone=#{phone},update_time=#{updateTime} where
+		student_id=#{studentId}
+	</update>
+
+	<update id="updateUserName" parameterType="com.db.entity.Student">
+		update tb_student set
+		user_name=#{userName},update_time=#{updateTime} where
+		student_id=#{studentId}
+	</update>
+    <update id="updateGrade" parameterType="com.db.entity.Student">
+        update tb_student set grade=#{grade},update_time=#{updateTime} 
+        where student_id = #{studentId}
+    </update>
+    <update id="updateJiangZhangInfo" parameterType="com.db.entity.Student">
+       update tb_student 
+       <set>
+          <if test="custodian1Relationship != null and custodian1Relationship != ''">
+				custodian1_relationship=#{custodian1Relationship}
+			</if>
+			<if test="custodian1Name != null and custodian1Name != ''">
+				,custodian1_name=#{custodian1Name}
+			</if>
+			<if test="custodian1Phone != null and custodian1Phone != ''">
+				,custodian1_phone=#{custodian1Phone}
+			</if>
+			<if test="custodian2Relationship != null and custodian2Relationship != ''">
+				,custodian2_relationship=#{custodian2Relationship}
+			</if>
+			<if test="custodian2Name != null and custodian2Name != ''">
+				,custodian2_name=#{custodian2Name}
+			</if>
+			<if test="custodian2Phone != null and custodian2Phone != ''">
+				,custodian2_phone=#{custodian2Phone}
+			</if>
+			<if test="payType != null">
+				,pay_type=#{payType}
+			</if>
+       </set>
+       where student_id=#{studentId}
+    </update>
+    
+    <update id="updatepayType" parameterType="com.db.entity.Student">
+     update tb_student set update_time=#{updateTime},pay_type=#{payType}
+        where student_id = #{studentId}
+    </update>
+    
+	<select id="getStudentByClassNoandstatus" resultMap="BaseResultMap">
+		select *
+		from tb_student where student_status=4 and class_no 
+		REGEXP '(^|,)${classNo}($|,)';
+	</select>
+
+	<update id="updateSubject" parameterType="com.db.entity.Student"
+		useGeneratedKeys="true" keyProperty="studentId">
+		update tb_student set
+		subject_type=#{subjectType}
+		where student_id=#{studentId}
+	</update>
+	
+	<select id="getCountMuber" resultType="int">
+	select count(*) from tb_student where student_status &lt;&gt;6
+	<if test="studentName != null and studentName != ''">
+	 and student_name like CONCAT('%','${studentName}','%') 
+<!-- 	  or phone like CONCAT('%','${studentName}','%')  -->
+	</if>
+      <if test="studentStatus != null">
+         and student_status=#{studentStatus}
+     </if> 
+      <if test="schoolId != null">
+         and school_id=#{schoolId}
+     </if> 
+	</select>
+	
+	
+	<select id="getScoolIdCount" resultType="int">
+	select count(*) from tb_student where student_status &lt;&gt;6  and school_id=#{schoolId}
+	<if test="studentName != null and studentName != ''">
+	 and student_name like CONCAT('%','${studentName}','%') 
+<!-- 	  or phone like CONCAT('%','${studentName}','%')  -->
+	</if>
+      <if test="studentStatus != null">
+         and student_status=#{studentStatus}
+     </if> 
+      <if test="classId != null">
+         and class_no=#{classId}
+     </if> 
+	</select>
+	
+	<!-- 管理员查看全部学员-->
+	<select id="getStudentList" resultMap="BaseResultMap">
+	  select * from tb_student s left join tb_subject sub on s.subject_type=sub.subject_id  
+	  left join tb_grade g on s.grade=g.grade_id
+	  left join tb_school_zone sz on s.school_id=sz.school_id
+	  left join tb_school_year sy on s.year=sy.id
+	  left join tb_season_type stt on s.choice_type=stt.season_id
+	  left join td_student_score scc on s.student_id=scc.student_id
+	  where   s.student_status &lt;&gt;6 
+	  <if test="studentName != null and studentName != ''">
+	and s.student_name like CONCAT('%','${studentName}','%') 
+<!-- 	or s.phone like CONCAT('%','${studentName}','%') -->
+</if>
+	<if test="studentStatus != null">
+		and s.student_status=#{studentStatus}
+	</if>
+	<if test="schoolId != null">
+		and s.school_id=#{schoolId}
+	</if>
+	order by s.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<!-- 老师只能查看自己校区的学员 -->
+	<select id="getScoolIdList" resultMap="BaseResultMap">
+		select * from tb_student s left join tb_subject sub on
+		s.subject_type=sub.subject_id
+		left join tb_grade g on s.grade=g.grade_id
+		left join tb_school_zone sz on s.school_id=sz.school_id
+		left join tb_school_year sy on s.year=sy.id
+		left join tb_season_type stt on s.choice_type=stt.season_id
+		left join td_student_score scc on s.student_id=scc.student_id
+		where s.student_status &lt;&gt;6 and s.school_id=#{schoolId}
+		<if test="studentName != null and studentName != ''">
+			and s.student_name like CONCAT('%','${studentName}','%') 
+<!-- 			or s.phone like CONCAT('%','${studentName}','%') -->
+		</if>
+		<if test="studentStatus != null">
+			and s.student_status=#{studentStatus}
+		</if>
+		<if test="classId != null">
+			and s.class_no=#{classId}
+		</if>
+		order by s.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<!-- 报名管理列表 -->
+	<select id="getEnlistListList" resultMap="BaseResultMap">
+		select * from tb_student s left join tb_subject sub on
+		s.subject_type=sub.subject_id
+		left join tb_grade g on s.grade=g.grade_id
+		left join tb_school_zone sz on s.school_id=sz.school_id
+		left join tb_school_year sy on s.year=sy.id
+		left join tb_season_type stt on s.choice_type=stt.season_id
+		where s.student_status &lt;&gt;6 
+<!-- 		and s.class_no is null -->
+		<if test="studentName != null and studentName != ''">
+			and s.student_name like CONCAT('%','${studentName}','%') 
+<!-- 			or s.phone like 	CONCAT('%','${studentName}','%') -->
+		</if>
+		<if test="studentStatus != null and studentStatus != ''">
+			and s.student_status=#{studentStatus}
+		</if>
+		<if test="schoolId != null">
+			and s.school_id=#{schoolId}
+		</if>
+		order by s.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	
+	<select id="findStudentGradeById" resultMap="BaseResultMap">
+	    select * from tb_student s left join tb_grade g on s.grade=g.grade_id
+	    where student_id=#{studentId}
+	</select>
+	<select id="getStudentByTime" resultMap="BaseResultMap">
+		select student_name,user_name,phone,student_status,attend_school,intentional_school,create_time from tb_student order by create_time desc limit #{pageNo},#{pageSize};
+	</select>
+	<select id="findStudentList" resultMap="BaseResultMap">
+	   select * from tb_student where 1=1
+	   <if test="subjectType != null and subjectType != ''">
+	      and subject_type=#{subjectType}
+	   </if>
+	   <if test="classId != null and classId != ''">
+	      and class_no REGEXP '(^|,)${classNo}($|,)';
+	   </if>
+	   <if test="studentId != null and studentId != ''">
+	      and student_id=#{studentId}
+	   </if>
+	</select>
+	<select id="studentNameDateils" resultMap="BaseResultMap">
+	          select * from td_test_record tr left join  
+	          tb_student s  on tr.student_id=s.student_id
+	          left join tb_subject stu on tr.subject=stu.subject_id
+	             where tr.student_id=#{studentId}
+	</select>
+	<select id="getClassIdandGradeId" resultMap="BaseResultMap">
+	  select * from tb_student where grade=#{gradeId} and class_no REGEXP '(^|,)${classNo}($|,)';
+	</select>
+	
+	<select id="findstudentDateils" resultMap="BaseResultMap">
+	         select * from tb_student s left join td_test_record tr on s.student_id=tr.student_id
+	             where s.student_id=#{studentId}
+	</select>
+	<!-- 假删除 -->
+	<update id="falseDeleteStudent" parameterType="com.db.entity.Student">
+	    update tb_student set student_status=6 where student_id=#{studentId}
+	</update>
+	<select id="getStudnetByName"  resultMap="BaseResultMap">
+		select * from tb_student where student_status &lt;&gt;6
+		and student_name like '%${name}%' 
+<!-- 		or phone like '%${name}%'; -->
+	</select>
+	
+	<select id="getStudentByClassandSchool" resultMap="BaseResultMap">
+		select * from tb_student where class_no REGEXP '(^|,)${classId}($|,)'
+		 and school_id=#{schoolId}
+	</select>
+	<update id="modityClassNo" parameterType="com.db.entity.Student">
+	    update tb_student set update_time=#{updateTime},class_no=#{classNo},
+	    student_status=#{studentStatus},school_id=#{schoolId} where student_id=#{studentId}
+	</update>
+	<select id="distributionCalssNoGradeById" resultMap="BaseResultMap">
+	 select * from tb_student where school_id=#{schoolId} and grade=#{gradeId} and subject_type=#{subject}
+	  order by create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getCountClassNo" resultType="int">
+	 select count(*) from tb_student where school_id=#{schoolId} and grade=#{gradeId} and subject_type=#{subject}
+	</select>
+	
+	<select id="getIsAllStudent" resultMap="BaseResultMap">
+	   select * from
+		   tb_student ts 
+		        left join tb_subject tsb on ts.subject_type=tsb.subject_id 
+		        left join tb_grade tg on ts.grade=tg.grade_id
+		        left join tb_school_year sy on ts.year=sy.id
+		        left join tb_school_zone sz on ts.school_id=sz.school_id
+		<where>
+			  1=1
+			<if test="schoolId !=null">
+			  and ts.school_id=#{schoolId}
+			</if>
+			<if test="year !=null">
+				and ts.year=#{year}
+			</if>
+			<if test="subject !=null and subject !=''">
+				and ts.subject_type=#{subject}
+			</if>
+			<if test="grade !=null">
+				and ts.grade=#{grade}
+			</if>
+			<if test="content !=null and content !=''">
+				and ts.student_name like '%${content}%'
+			</if>
+		</where>
+		limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getAllStudentCount" resultType="int">
+	   select count(*) from
+		 tb_student ts 
+		      left join tb_subject tsb on
+		       ts.subject_type=tsb.subject_id left join tb_grade tg on
+		       ts.grade=tg.grade_id
+		<where>
+			  1=1
+			<if test="schoolId !=null">
+			  and ts.school_id=#{schoolId}
+			</if>
+			<if test="year !=null">
+				and ts.year=#{year}
+			</if>
+			<if test="subject !=null and subject !=''">
+				and ts.subject_type=#{subject}
+			</if>
+			<if test="grade !=null">
+				and ts.grade=#{grade}
+			</if>
+			<if test="content !=null and content !=''">
+				and ts.student_name like '%${content}%'
+			</if>
+		</where>
+	</select>
+	<update id="updateClassNo" parameterType="com.db.entity.Student">
+	 update tb_student set update_time=#{updateTime},class_no=#{classNo},student_status=#{studentStatus}
+	    where student_id=#{studentId}
+	</update>
+	<select id="findIsExistenceCampus" resultMap="BaseResultMap">
+	 select * from tb_student where school_id=#{schoolId}
+	</select>
+	<update id="updatePayType" parameterType="com.db.entity.Student">
+	update tb_student set update_time=#{updateTime},pay_type=#{payType}
+	    where student_id=#{studentId}
+	</update>
+</mapper>

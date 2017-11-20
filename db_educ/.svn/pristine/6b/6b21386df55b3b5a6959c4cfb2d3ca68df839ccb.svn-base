@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.ReadingContentService">
+  <resultMap type="com.db.entity.ReadingContent" id="BaseResultMap">
+      <result column="content_id" property="contentId" jdbcType="INTEGER" />    
+      <result column="reading_text" property="readingText" jdbcType="VARCHAR" />    
+   
+   </resultMap>
+
+
+</mapper>

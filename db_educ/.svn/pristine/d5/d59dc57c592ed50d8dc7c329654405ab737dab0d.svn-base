@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.PaperDetailsService">
+	<resultMap id="BaseResultMap" type="com.db.entity.PaperDetails">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="question_id" property="questionId" jdbcType="INTEGER" />
+		<result column="question_type" property="questionType"
+			jdbcType="INTEGER" />
+		<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+		<result column="value" property="value" jdbcType="DOUBLE" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+        <result column="is_remove" property="isRemove" jdbcType="INTEGER" /> 
+		<association property="questionSingleChoice" javaType="com.db.entity.QuestionSingleChoice">
+			<id column="choice_id" property="choiceId" />
+			<result column="choice_desc" property="choiceDesc" />
+			<result column="choice_optionA" property="OptionA" />
+			<result column="choice_optionB" property="OptionB" />
+			<result column="choice_optionC" property="OptionC" />
+			<result column="choice_optionD" property="OptionD" />
+			<result column="choice_answer" property="answer" />
+			<result column="choice_answer_desc" property="answerDesc" />
+			<result column="subject" property="subject" />
+			<result column="knowledge" property="knowledge" />
+			<result column="knowledge_begin" property="knowledgeBegin" />
+			<result column="knowledge_end" property="knowledgeEnd" />
+			<result column="question_degree" property="degree" />
+			<result column="question_type" property="type" />
+			<result column="question_source" property="source" />
+			<result column="question_score" property="score" />
+			<result column="tag_id" property="tag" />
+			<result column="teacher_id" property="teacherId" />
+			<result column="used_count" property="useCount" />
+			<result column="right_count" property="rightCount" />
+			<result column="fault_count" property="faultCount" />
+			<result column="ispublic" property="ispublic" />
+		</association>
+		<association property="questionMulitChoice" javaType="com.db.entity.QuestionMulitChoice">
+			<id column="choice_id" property="choiceId" jdbcType="INTEGER" />
+			<result column="choice_desc" property="choiceDesc1" jdbcType="VARCHAR" />
+			<result column="choice_optionA" property="OptionA1" jdbcType="VARCHAR" />
+			<result column="choice_optionB" property="OptionB1" jdbcType="VARCHAR" />
+			<result column="choice_optionC" property="OptionC1" jdbcType="VARCHAR" />
+			<result column="choice_optionD" property="OptionD1" jdbcType="VARCHAR" />
+			<result column="choice_answer" property="answer1" jdbcType="VARCHAR" />
+			<result column="choice_answer_desc" property="answerDesc1"
+				jdbcType="VARCHAR" />
+			<result column="subject" property="subject" jdbcType="INTEGER" />
+			<result column="knowledge" property="knowledge" jdbcType="INTEGER" />
+			<result column="knowledge_begin" property="knowledgeBegin"
+				jdbcType="VARCHAR" />
+			<result column="knowledge_end" property="knowledgeEnd"
+				jdbcType="VARCHAR" />
+			<result column="question_degree" property="degree1" jdbcType="INTEGER" />
+			<result column="question_type" property="type" jdbcType="INTEGER" />
+			<result column="question_source" property="source1" jdbcType="INTEGER" />
+			<result column="question_score" property="score1" jdbcType="FLOAT" />
+			<result column="tag_id" property="tag1" jdbcType="VARCHAR" />
+			<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="used_count" property="useCount" jdbcType="INTEGER" />
+			<result column="right_count" property="rightCount" jdbcType="INTEGER" />
+			<result column="fault_count" property="faultCount" jdbcType="INTEGER" />
+			<result column="ispublic" property="ispublic1" jdbcType="INTEGER" />
+		</association>
+		<association property="questionJudge" javaType="com.db.entity.QuestionJudge">
+			<id column="judge_id" property="judgeId" jdbcType="INTEGER" />
+			<result column="judge_desc" property="judgeDesc" jdbcType="VARCHAR" />
+			<result column="judge_answer" property="answer2" jdbcType="INTEGER" />
+			<result column="judge_answer_desc" property="answerDesc2"
+				jdbcType="VARCHAR" />
+			<result column="subject" property="subject" jdbcType="INTEGER" />
+			<result column="knowledge" property="knowledge" jdbcType="INTEGER" />
+			<result column="knowledge_begin" property="knowledgeBegin"
+				jdbcType="VARCHAR" />
+			<result column="knowledge_end" property="knowledgeEnd"
+				jdbcType="VARCHAR" />
+			<result column="question_degree" property="degree2" jdbcType="INTEGER" />
+			<result column="question_type" property="type" jdbcType="INTEGER" />
+			<result column="question_source" property="source2" jdbcType="INTEGER" />
+			<result column="question_score" property="score2" jdbcType="FLOAT" />
+			<result column="tag_id" property="tag2" jdbcType="VARCHAR" />
+			<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="used_count" property="useCount" jdbcType="INTEGER" />
+			<result column="right_count" property="rightCount" jdbcType="INTEGER" />
+			<result column="fault_count" property="faultCount" jdbcType="INTEGER" />
+			<result column="ispublic" property="ispublic2" jdbcType="INTEGER" />
+		</association>
+		<association property="questionRead" javaType="com.db.entity.QuestionRead">
+			<id column="read_id" property="readId" jdbcType="INTEGER" />
+			<result column="read_desc" property="readDesc" jdbcType="VARCHAR" />
+			<result column="read_optiontitle" property="Optiontitle"
+				jdbcType="VARCHAR" />
+			<result column="read_optionA" property="OptionA_read"
+				jdbcType="VARCHAR" />
+			<result column="read_optionB" property="OptionB_read"
+				jdbcType="VARCHAR" />
+			<result column="read_optionC" property="OptionC_read"
+				jdbcType="VARCHAR" />
+			<result column="read_optionD" property="OptionD_read"
+				jdbcType="VARCHAR" />
+			<result column="read_answer" property="answer_read" jdbcType="VARCHAR" />
+			<result column="read_answer_desc" property="answerDesc_read"
+				jdbcType="VARCHAR" />
+			<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+			<result column="subject" property="subject" jdbcType="INTEGER" />
+			<result column="knowledge" property="knowledge" jdbcType="INTEGER" />
+			<result column="knowledge_begin" property="knowledgeBegin"
+				jdbcType="VARCHAR" />
+			<result column="knowledge_end" property="knowledgeEnd"
+				jdbcType="VARCHAR" />
+			<result column="question_degree" property="degree_read"
+				jdbcType="INTEGER" />
+			<result column="question_type" property="type" jdbcType="INTEGER" />
+			<result column="question_source" property="source_read"
+				jdbcType="INTEGER" />
+			<result column="question_score" property="score_read"
+				jdbcType="FLOAT" />
+			<result column="tag_id" property="tag_read" jdbcType="VARCHAR" />
+			<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="used_count" property="useCount" jdbcType="INTEGER" />
+			<result column="right_count" property="rightCount" jdbcType="INTEGER" />
+			<result column="fault_count" property="faultCount" jdbcType="INTEGER" />
+			<result column="ispublic" property="ispublic_read" jdbcType="INTEGER" />
+		</association>
+		<association javaType="com.db.entity.QuestionsType"
+			property="questionsType">
+			<id column="topic_id" property="topicId" jdbcType="INTEGER" />
+			<result column="topic_name" property="topicName" jdbcType="VARCHAR" />
+			<result column="typic_order" property="typicOrder" jdbcType="INTEGER" />
+		</association>
+	</resultMap>
+
+	<!-- 新增题目 -->
+	<insert id="savePaperDetails" parameterType="com.db.entity.PaperDetails"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_paper_details(question_id,question_type,paper_id,value,create_time)
+		values(#{questionId},#{questionType},#{paperId},#{value},#{createTime});
+	</insert>
+
+	<select id="getPaerById" resultMap="BaseResultMap">
+		select * from
+		tb_paper_details p left join tb_question_singlechoice q on
+		p.question_id=q.choice_id
+		where p.paper_id=#{0} limit #{1},#{2}
+	</select>
+	<select id="getPaperDetails" resultMap="BaseResultMap">
+		select * from
+		tb_paper_details where paper_id=#{0} and question_id=#{1}
+	</select>
+	
+	<select id="findPaperDetailsById" resultMap="BaseResultMap">
+		select * from
+		tb_paper_details where paper_id=#{0} and question_id=#{1} and question_type=#{2}
+	</select>
+	
+	<select id="getPaperDetailsByPaperId" resultMap="BaseResultMap">
+		select * from tb_paper_details tpd left join tb_questions_type tq on tpd.question_type=tq.topic_id
+		<if test="type==1">
+			left join tb_question_singlechoice tqs on
+			tpd.question_id=tqs.choice_id where tpd.paper_id=#{paperId} and
+			tpd.question_type=1 and tpd.is_remove&lt;&gt;1
+		</if>
+		<if test="type==2">
+			left join tb_question_mulitchoice tqm on
+			tpd.question_id=tqm.choice_id where tpd.paper_id=#{paperId} and
+			tpd.question_type=2 and tpd.is_remove&lt;&gt;1
+		</if>
+		<if test="type==3">
+			left join tb_question_judge tqj on
+			tpd.question_id=tqj.judge_id where tpd.paper_id=#{paperId} and
+			tpd.question_type=3 and tpd.is_remove&lt;&gt;1
+		</if>
+		<if test="type==4">
+			left join tb_question_read tqr on
+			tpd.question_id=tqr.read_id where tpd.paper_id=#{paperId} and
+			tpd.question_type=4 and tpd.is_remove&lt;&gt;1
+		</if>
+	     
+	</select>
+	<select id="findPaperTotai" resultType="int">
+	  select count(*) from tb_paper_details where paper_id=#{paperId}
+	</select>
+	<select id="getPaperDetatilsId" resultMap="BaseResultMap">
+	select * from tb_paper_details tpd left join tb_questions_type tq on tpd.question_type=tq.topic_id
+	   left join tb_question_singlechoice tqs on tpd.question_id=tqs.choice_id
+	     left join tb_question_mulitchoice tqm on tpd.question_id=tqm.choice_id 
+	     left join tb_question_judge tqj on tpd.question_id=tqj.judge_id
+	     left join tb_question_read tqr on tpd.question_id=tqr.read_id
+	       where tpd.paper_id=#{paperId}
+	</select>
+	<select id="findPaperList" resultMap="BaseResultMap">
+	    select * from tb_paper_details where paper_id=#{paperId} and is_remove&lt;&gt;1
+	    limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getCount" resultType="int">
+	   select count(*) from tb_paper_details where paper_id=#{paperId}
+	</select>
+	<!-- <select id="getPpaerById" resultMap="BaseResultMap">
+	 select count(*) from tb_paper_details where id=#{id}
+	</select> -->
+	<update id="updateIsRemove" parameterType="com.db.entity.PaperDetails">
+	   update tb_paper_details set is_remove=#{isRemove},update_time=#{updateTime} where id=#{id}
+	</update>
+	<select id="findPaperId" resultMap="BaseResultMap">
+	 select * from tb_paper_details where id=#{id}
+	</select>
+	<delete id="paperDelete" parameterType="int">
+	   delete from tb_paper_details where id=#{id}
+	</delete>
+	<select id="getPaperDetailsListById" resultMap="BaseResultMap">
+	   select * from tb_paper_details where paper_id=#{paperId}
+	</select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.UserService">
+
+  <resultMap id="BaseResultMap" type="com.db.entity.User">    
+        <result column="user_id" property="userId" jdbcType="INTEGER" />    
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />    
+        <result column="password" property="password" jdbcType="VARCHAR" />    
+        <result column="phone" property="phone" jdbcType="VARCHAR" />   
+        <result column="eamil" property="eamil" jdbcType="VARCHAR" /> 
+        <result column="user_type" property="userType" jdbcType="INTEGER" /> 
+        <result column="sex" property="sex" jdbcType="INTEGER" /> 
+         <result column="create_time" property="createTime"/>  
+          <result column="update_time" property="updateTime"/>   
+    </resultMap>    
+    
+    <sql id="userList">    
+        userId, userName, password, phone,eamil,userType,sex    
+    </sql>     
+
+<!-- 查询所有菜单 -->
+<select id="getAllUser" resultMap="BaseResultMap">
+ select *
+	from tb_user where 1=1
+	<!-- 模糊查询 -->
+	<if test="userName!= null and userName != '' ">
+       	<![CDATA[ and userName like '%${userName}%' ]]>
+   	</if>
+   	
+</select>
+<select id="getUserById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+	select *
+	   from tb_user where user_id=#{userId}
+</select>
+
+
+</mapper>

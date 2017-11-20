@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//src/main/java/com/db/util/PageUtil.java=UTF-8
+encoding//src/main/resources/jdbc.properties=UTF-8
+encoding//src/main/resources/log4j.properties=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/classmanage/updateclasses.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/exampaper/watchexam.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/lectureNoteManage/mylectureNote.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/questionbank/createquestion.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/questionbank/myquestionbank.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/rolemanage/rolemanage.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/taskmanage/mytask.jsp=UTF-8
+encoding/<project>=UTF-8

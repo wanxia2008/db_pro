@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.SubjectService">
+	<resultMap type="com.db.entity.Subject" id="BaseResultMap">
+		<result column="subject_id" property="subjectId" jdbcType="INTEGER" />
+		<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		<result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+     <result column="create_time" property="createTime" />
+     
+     <association property="grade" javaType="com.db.entity.Grade">
+         <id column="grade_id" property="gradeId" jdbcType="INTEGER" />    
+        <result column="grade_name" property="gradeName" jdbcType="VARCHAR" /> 
+     </association>
+     
+	</resultMap>
+	
+	<select id="getSubjectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select * from tb_subject where subject_id=#{subject};
+	</select>
+	<!-- 根据当前用户，拿到用户科目 -->
+	<select id="getTeacherIsSubject" resultMap="BaseResultMap">
+		select * from tb_subject where subject_id=#{subjectId};
+	</select>
+	
+	<select id="getSubject" resultMap="BaseResultMap">
+		select * from tb_subject;
+	</select>
+	
+
+	<select id="getSubjectByIds" resultMap="BaseResultMap">
+		select * from tb_subject where subject_id in
+		<foreach item="subjects" collection="list"
+			open="(" separator="," close=")">
+			#{subjects}
+		</foreach>
+	</select>
+	<select id="findSubjectList" resultMap="BaseResultMap">
+	    select * from tb_subject s left join tb_grade g on s.grade_id=g.grade_id 
+	         where 1=1
+	     <if test="subjectName != null and subjectName != ''">
+	      and s.subject_name like '%${subjectName}%'
+	  </if>
+	  order by s.subject_id limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getCount" resultType="int">
+	  select count(*) from tb_subject where 1=1
+	  <if test="subjectName != null and subjectName != ''">
+	      and subject_name like '%${subjectName}%'
+	  </if>
+	</select>
+	<select id="getSubjectNmae" resultMap="BaseResultMap">
+	  select * from tb_subject where subject_name=#{subjectName}
+	</select>
+	<insert id="addSubject" parameterType="com.db.entity.Subject">
+	  insert into tb_subject (create_time,subject_name)
+	       values(#{createTime},#{subjectName})
+	</insert>
+	<select id="findSubjectById" resultMap="BaseResultMap">
+	 select * from tb_subject where subject_id=#{subjectId}
+	</select>
+	<update id="updateSubject" parameterType="com.db.entity.Subject">
+	 update tb_subject set create_time=#{createTime},subject_name=#{subjectName} 
+	<!--  ,grade_id=#{gradeId} --> where subject_id=#{subjectId}
+	</update>
+	<delete id="deleteSubject" parameterType="Integer">
+	   delete  from tb_subject where subject_id=#{subjectId}
+	</delete>
+</mapper>

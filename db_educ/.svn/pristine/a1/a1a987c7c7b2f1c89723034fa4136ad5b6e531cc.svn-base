@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.ClassRecordService">
+  <resultMap type="com.db.entity.ClassRecord" id="ClassRecordMap">
+	<result column="record_id" property="recordId" jdbcType="INTEGER" />
+	<result column="class_id" property="classId" jdbcType="INTEGER" />
+	<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+	<result column="task_id" property="taskId" jdbcType="INTEGER" />
+	<result column="homework_id" property="homeworkId" jdbcType="INTEGER" />
+	<result column="lecturenote_id" property="lecturenoteId" jdbcType="INTEGER" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+	<result column="create_time" property="createTime" />
+	<result column="update_time" property="updateTime" />
+	
+	
+	  <association property="classNo" javaType="com.db.entity.ClassNo">
+			<id column="class_id" property="classId" jdbcType="INTEGER" />
+			<result column="class_name" property="className" jdbcType="VARCHAR" />
+			<result column="year" property="year" jdbcType="VARCHAR" />
+		    <result column="season_type" property="seasonType" jdbcType="INTEGER" />
+			<result column="subject" property="subject" jdbcType="INTEGER" />
+		    <result column="grade" property="grade" jdbcType="INTEGER" />
+			<result column="school_area" property="schoolArea" jdbcType="INTEGER" />
+		</association>
+		<association property="schoolYear" javaType="com.db.entity.SchoolYear">
+          <id column="id" property="id" jdbcType="INTEGER" />    
+          <result column="school_year" property="year" jdbcType="INTEGER" /> 
+       </association>
+        <association property="schoolZone" javaType="com.db.entity.SchoolZone">
+       	<id column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		<result column="is_using" property="isUsing" jdbcType="INTEGER" />
+       </association>
+        <association property="subject" javaType="com.db.entity.Subject">
+       	<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+		<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+       </association>
+       
+        <association property="grade" javaType="com.db.entity.Grade">
+       	<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+       </association>
+       
+       <association property="taskType" javaType="com.db.entity.TaskType">
+			<id column="type_id" property="typeId" jdbcType="INTEGER" />
+			<result column="tasktype_name" property="taskTypeName"
+				jdbcType="VARCHAR" />
+		</association>
+		
+		 <association property="paInfo" javaType="com.db.entity.PaperInfo">
+			<id column="pi_id" property="piId" jdbcType="INTEGER" />
+		<result column="pi_name" property="piName" jdbcType="VARCHAR" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="pi_type" property="piType" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER" />
+		<result column="science" property="science" jdbcType="INTEGER" />
+		<result column="used_times" property="usedTimes" jdbcType="INTEGER" />
+		<result column="difficulty_value" property="difficultyValue"
+			jdbcType="INTEGER" />
+		</association>
+		
+		<association property="lectureNotes" javaType="com.db.entity.LectureNotes">
+			<id column="handout_id" property="handoutId" jdbcType="INTEGER" />
+			<result column="handout_title" property="handoutTitle"
+				jdbcType="VARCHAR" />
+			<result column="handout_content" property="handoutContent"
+				jdbcType="VARCHAR" />
+			<result column="handout_type" property="handoutType" jdbcType="INTEGER" />
+			<result column="create_user" property="createUser" jdbcType="INTEGER" />
+			<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		</association>
+		<association property="homework" javaType="com.db.entity.Homework">
+		<id column="hk_id" property="hkId" jdbcType="INTEGER" />
+		<result column="hk_name" property="hkName" jdbcType="VARCHAR" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER" />
+		<result column="difficulty_value" property="difficultyValue"
+			jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" />
+		
+		</association>
+</resultMap>
+ 
+<!--  试卷考试列表-->
+<select id="getExamPaperList" resultMap="ClassRecordMap">
+     select * from tb_class_no cn 
+     left join tb_class_record cr on cn.class_id=cr.class_id
+     left join tb_school_year sy on cn.year=sy.id
+     left join tb_grade g on cn.grade=g.grade_id
+     left join tb_school_zone sz on cn.school_area=sz.school_id
+     left join tb_subject sub on cn.subject=sub.subject_id
+    where 1=1
+    <if test="classId != null">
+    and cr.class_id=#{classId}
+    </if>
+      <if test="schoolId != null">
+      and cn.school_area=#{schoolId}
+    </if>
+    GROUP BY cn.class_id desc HAVING cn.class_id >= 1 limit #{pageNo},#{pageSize}
+</select>
+
+<select id="getPaperCount" resultType="int">
+	select count(*) from tb_class_no cn
+<!-- 	left join tb_class_record cr on cn.class_id=cr.class_id -->
+	where 1=1
+	<if test="classId != null">
+		and cn.class_id=#{classId}
+	</if>
+	  <if test="schoolId != null">
+      and cn.school_area=#{schoolId}
+    </if>
+</select>
+
+	<!-- 试卷考试列表 -->
+	<select id="getExamPaperSchoolList" resultMap="ClassRecordMap">
+		select * from tb_class_no cn
+		left join tb_class_record cr on cn.class_id=cr.class_id
+		left join tb_school_year sy on cn.year=sy.id
+		left join tb_grade g on cn.grade=g.grade_id
+		left join tb_subject sub on cn.subject=sub.subject_id
+		left join tb_school_zone sz on cn.school_area=sz.school_id
+		where cn.school_area=#{schoolId}
+		<if test="classId != null">
+			and cr.class_id=#{classId}
+		</if>
+		GROUP BY cn.class_id desc HAVING cn.class_id >= 1 limit
+		#{pageNo},#{pageSize}
+	</select>
+
+
+<select id="getSchoolCount" resultType="int">
+	select count(*) from tb_class_no cn
+<!-- 	left join tb_class_record cr on cn.class_id=cr.class_id -->
+	where cn.school_area=#{schoolId}
+	<if test="classId != null">
+		and cn.class_id=#{classId}
+	</if>
+</select>
+<insert id="addClassRecord" flushCache="true" keyProperty="recordId"
+   parameterType="com.db.entity.ClassRecord">
+	insert into tb_class_record (class_id,create_time,status
+	<if test="paperId !=null">
+			<![CDATA[,paper_id]]>
+	</if>
+	<if test="taskId !=null">
+			<![CDATA[,task_id]]>
+	</if>
+	<if test="homeworkId !=null">
+			<![CDATA[,homework_id]]>
+	</if>
+	<if test="lecturenoteId !=null">
+			<![CDATA[,lecturenote_id]]>
+	</if>
+	)
+	values(#{classId},#{createTime},#{status}
+	<if test="paperId !=null">
+			<![CDATA[,#{paperId}]]>
+	</if>
+	<if test="taskId !=null">
+			<![CDATA[,#{taskId}]]>
+	</if>
+	<if test="homeworkId !=null">
+			<![CDATA[,#{homeworkId}]]>
+	</if>
+	<if test="lecturenoteId !=null">
+			<![CDATA[,#{lecturenoteId}]]>
+	</if>
+	)
+</insert>
+
+
+<select id="getPaperById" resultMap="ClassRecordMap">
+	select * from tb_class_record where class_id=#{classId}
+	<if test="paperId != null">
+		and paper_id=#{paperId}
+	</if>
+	<if test="lecturenoteId != null">
+		and lecturenote_id=#{lecturenoteId}
+	</if>
+	<if test="homeworkId != null">
+		and homework_id=#{homeworkId}
+	</if>
+</select>
+	<update id="updateStatus" parameterType="com.db.entity.ClassRecord">
+		update tb_class_record set update_time=#{updateTime},status=#{status}
+		<if test="lecturenoteId != null">
+		,lecturenote_id=#{lecturenoteId}
+		</if>
+		<if test="homeworkId != null">
+		,homework_id=#{homeworkId}
+		</if>
+		<if test="paperId != null">
+		,paper_id=#{paperId}
+		</if>
+		where record_id=#{recordId}
+	</update>
+	
+	
+	<select id="findPaperExamList" resultMap="ClassRecordMap">
+	 select * from tb_class_record cr 
+	  left join tb_paper_info info on cr.paper_id=info.pi_id
+	  left join tb_subject sub on info.subject=sub.subject_id
+	  left join td_task_type tt on info.pi_type=tt.type_id
+	  where info.pi_type &lt;&gt;4 and cr.paper_id is not null
+	  <if test="classId != null">
+	  and cr.class_id=#{classId}
+	  </if>
+	  <if test="paperId != null">
+	  and cr.paper_id=#{paperId}
+	  </if>
+	  order by cr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	
+	<select id="findPaperCount" resultType="int">
+	select count(*) from tb_class_record cr where cr.paper_id is not null
+	<if test="classId != null">
+		and cr.class_id=#{classId}
+	</if>
+	<if test="paperId != null">
+		and cr.paper_id=#{paperId}
+	</if>
+	</select>
+	
+	
+	<select id="findlecturenoteExamList" resultMap="ClassRecordMap">
+	 select * from tb_class_record cr 
+	  left join tb_lecture_notes info on cr.lecturenote_id=info.handout_id
+	  left join tb_subject sub on info.subject=sub.subject_id
+	  left join tb_grade g on info.grade=g.grade_id
+	  where cr.lecturenote_id &lt;&gt;0 and cr.lecturenote_id is not null  
+	  <if test="classId != null">
+	  and cr.class_id=#{classId}
+	  </if>
+	  <if test="lecturenoteId != null">
+	  and cr.lecturenote_id=#{lecturenoteId}
+	  </if>
+	  order by cr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	
+	<select id="findlecturenoteCount" resultType="int">
+	select count(*) from tb_class_record cr 
+	where cr.lecturenote_id &lt;&gt;0 and cr.lecturenote_id is not null  
+	<if test="classId != null">
+		and cr.class_id=#{classId}
+	</if>
+	<if test="lecturenoteId != null">
+		and cr.lecturenote_id=#{lecturenoteId}
+	</if>
+	</select>
+	
+	<select id="getClassRecordById" resultMap="ClassRecordMap">
+	select * from tb_class_record where record_id=#{recordId}
+	</select>
+	<!-- 作业考试列表 -->
+	<select id="findhomeworkIdExamList" resultMap="ClassRecordMap">
+	select * from tb_class_record cr 
+	left join td_homework hk on cr.homework_id=hk.hk_id
+	left join tb_subject sub on hk.subject=sub.subject_id
+	left join tb_grade g on hk.grade=g.grade_id
+	where cr.homework_id &lt;&gt;0 and cr.homework_id is not null
+	 <if test="classId != null">
+	  and cr.class_id=#{classId}
+	  </if>
+	  <if test="homeworkId != null">
+	  and cr.homework_id=#{homeworkId}
+	  </if>
+	  order by cr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	
+		
+	<select id="findhomeworkIdCount" resultType="int">
+	select count(*) from tb_class_record cr 
+	where cr.homework_id &lt;&gt;0 and cr.homework_id is not null  
+	<if test="classId != null">
+		and cr.class_id=#{classId}
+	</if>
+	<if test="homeworkId != null">
+		and cr.homework_id=#{homeworkId}
+	</if>
+	</select>
+	<delete id="deleteClassRecordById">
+	delete from tb_class_record where record_id=#{recordId}
+	</delete>
+</mapper>

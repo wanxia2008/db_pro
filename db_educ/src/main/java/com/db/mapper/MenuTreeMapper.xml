@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.MenuTreeService">
+
+	<resultMap id="MenuTreeMap" type="com.db.entity.MenuTree">
+		<result column="menu_id" property="menuId" jdbcType="INTEGER" />
+		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+		<result column="menu_url" property="menuUrl" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="menu_level" property="menuLevel" jdbcType="INTEGER" />
+		<result column="menu_logo" property="menuLogo" jdbcType="VARCHAR" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="getParentMenu" resultMap="MenuTreeMap">
+		select * from td_menu_tree
+				where menu_id in
+				<foreach item="item"  index="index" collection="ids" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				order by order_id;
+	</select>
+	<select id="getChildMenu" resultMap="MenuTreeMap">
+		select * from td_menu_tree
+		where menu_level = 2 and parent_id=#{parentMenuId} order by order_id;
+	</select>
+	
+	<select id="getHisTreeNode" resultMap="MenuTreeMap">
+	   select * from td_menu_tree
+	         where menu_id in
+				<foreach item="item"  index="index" collection="menuIds" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				order by order_id;
+	</select>
+	
+	<select id="getHisTreeNode1" resultMap="MenuTreeMap">
+	   select * from td_menu_tree
+	         where menu_id in
+				<foreach item="item"  index="index" collection="ids" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				order by order_id;
+	</select>
+</mapper>

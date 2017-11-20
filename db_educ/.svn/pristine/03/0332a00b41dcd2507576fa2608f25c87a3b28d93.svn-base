@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.ClassroomService">
+	<resultMap id="ClassroomMap" type="com.db.entity.Classroom">
+		<result column="classroom_id" property="classroomId" jdbcType="INTEGER" />
+		<result column="classroom_name" property="classroomName"
+			jdbcType="VARCHAR" />
+		<result column="max_number" property="maxNumber" jdbcType="INTEGER" />
+		<result column="school_area" property="schoolArea" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<collection property="schoolList" resultMap="schoolMap"></collection>
+	</resultMap>
+
+	<resultMap type="com.db.entity.SchoolZone" id="schoolMap">
+		<id column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" />
+		<result column="is_using" property="isUsing" jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<select id="getClassroom" resultMap="ClassroomMap"
+		parameterType="Integer">
+		select tc.*,ts.school_id school_id,ts.school_name school_name,
+		ts.is_using is_using from tb_classroom tc right join tb_school_zone ts
+		on tc.school_area=ts.school_id
+		<where> 
+			ts.is_using=1 AND tc.classroom_name IS NOT NULL
+			<if test="name !=null and name !=''">
+				and tc.classroom_name like CONCAT('%','${name}','%')
+			</if>
+		</where>
+	   order by tc.create_time desc	limit #{pageNo},#{pageSize};
+	</select>
+	
+	<select id="getClassroomSchoolId" resultMap="ClassroomMap"
+		parameterType="Integer">
+		select tc.*,ts.school_id school_id,ts.school_name school_name,
+		ts.is_using is_using from tb_classroom tc right join tb_school_zone ts
+		on tc.school_area=ts.school_id
+		<where> 
+			tc.school_area=#{schoolId} and ts.is_using=1 AND tc.classroom_name IS NOT NULL
+			<if test="name !=null and name !=''">
+				and tc.classroom_name like CONCAT('%','${name}','%')
+			</if>
+		</where>
+	   order by tc.create_time desc	limit #{pageNo},#{pageSize};
+	</select>
+	
+<!-- COALESCE(count(*),0)  -->
+	<select id="getCount" resultType="long">
+		select count(*) from tb_classroom tc right join tb_school_zone ts
+		on tc.school_area=ts.school_id
+		<where>
+			ts.is_using=1 and tc.classroom_name IS NOT NULL
+			<if test="name !=null and name !=''">
+				and tc.classroom_name like CONCAT('%','${name}','%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="getSchoolIdCount" resultType="int">
+		select count(*) from tb_classroom tc right join tb_school_zone ts
+		on tc.school_area=ts.school_id
+		<where>
+			tc.school_area=#{schoolId} and ts.is_using=1 and tc.classroom_name IS NOT NULL
+			<if test="name !=null and name !=''">
+				and tc.classroom_name like CONCAT('%','${name}','%')
+			</if>
+		</where>
+	</select>
+
+	<select id="getClassroomByroomId" parameterType="Integer"
+		resultMap="ClassroomMap">
+		select * from tb_classroom where
+		classroom_id=#{classroomId};
+	</select>
+
+	<select id="getClassroom1" resultMap="ClassroomMap">
+		select * from tb_classroom;
+	</select>
+
+	<select id="getClassroom2" resultMap="ClassroomMap">
+		select * from tb_classroom
+		where school_area=#{schoolId};
+	</select>
+
+	<insert id="addClassroom" keyProperty="classroomId"
+		parameterType="com.db.entity.Classroom" useGeneratedKeys="true">
+		insert into
+		tb_classroom(classroom_id,classroom_name,max_number,school_area,create_time)
+		values(
+		#{classroomId},#{classroomName},#{maxNumber},#{schoolArea},#{createTime});
+	</insert>
+
+	<update id="updateClassroom" parameterType="com.db.entity.Classroom">
+		update tb_classroom
+		set
+		classroom_name=#{classroomName},max_number=#{maxNumber},
+		update_time=#{updateTime} where classroom_id=#{classroomId};
+	</update>
+
+	<delete id="deleteClassroom" parameterType="java.lang.Integer">
+		delete from
+		tb_classroom where classroom_id=#{classroomId};
+	</delete>
+
+	<select id="getClassroomByName" resultMap="ClassroomMap">
+		select * from
+		tb_classroom where classroom_name=#{name}
+	</select>
+	<select id="findClassroomName" resultMap="ClassroomMap">
+		select * from tb_classroom where classroom_name=#{classroomName} and
+		school_area=#{schoolArea}
+	</select>
+	<select id="findClassroomById" resultMap="ClassroomMap">
+	  select * from tb_classroom where classroom_id=#{classroomId};
+	</select>
+</mapper>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.HomeworkRecordService">
+	<resultMap id="HomeworkRecordMap" type="com.db.entity.HomeworkRecord">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="student_id" property="studentId" jdbcType="INTEGER" />
+		<result column="class_id" property="classId" jdbcType="INTEGER" />
+		<result column="homework_id" property="homeworkId" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="score" property="score" jdbcType="DOUBLE" />
+		<result column="write_number" property="writeNumber" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="total_time" property="totalTime" jdbcType="INTEGER" />
+		<result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		
+		<association javaType="com.db.entity.Subject" property="subject2">
+			<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+			<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association javaType="com.db.entity.ClassNo" property="classNo">
+			<id column="class_id" property="classId" jdbcType="INTEGER" />
+			<result column="class_name" property="className" jdbcType="VARCHAR" />
+			<result column="grade" property="grade" jdbcType="INTEGER" />
+		</association>
+		
+		<association javaType="com.db.entity.Student" property="student">
+			<id column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="student_name" property="studentName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="homework" javaType="com.db.entity.Homework">
+			<id column="hk_id" property="hkId" jdbcType="INTEGER" />
+			<result column="hk_name" property="hkName" jdbcType="VARCHAR" />
+			<result column="subject" property="subject" jdbcType="INTEGER" />
+			<result column="grade" property="grade" jdbcType="INTEGER" />
+			<result column="science" property="science" jdbcType="INTEGER" />
+			<result column="user_times" property="userTimes" jdbcType="INTEGER" />
+			<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+			<result column="knowledge_begin" property="knowledgeBegin"
+				jdbcType="INTEGER" />
+			<result column="knowledge_end" property="knowledgeEnd"
+				jdbcType="INTEGER" />
+			<result column="difficulty_value" property="difficultyValue"
+				jdbcType="INTEGER" />
+			<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+			<result column="hk_total" property="hkTotal" jdbcType="INTEGER" />
+			<result column="hk_score" property="hkScore" jdbcType="DOUBLE" />
+		</association>
+		
+	</resultMap>
+
+
+	<insert id="addHomeworkrecord" parameterType="com.db.entity.HomeworkRecord"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		td_homework_record(student_id,class_id,homework_id,subject,status,create_time
+		<if test="gradeId != null">
+		<![CDATA[,grade_id]]>
+		</if>
+		)
+		values(#{studentId},#{classId},#{homeworkId},#{subject},#{status},#{createTime}
+		<if test="gradeId != null">
+		<![CDATA[,#{gradeId}]]>
+		</if>
+		);
+	</insert>
+
+	<select id="getHomeworkRecordById" resultMap="HomeworkRecordMap">
+		select * from
+		td_homework_record where id=#{id}
+	</select>
+
+	<!-- 课后作业列表 -->
+	<select id="getHomeworkByStudentId" resultMap="HomeworkRecordMap">
+		select * from td_homework_record thr 
+		left join tb_subject ts on thr.subject=ts.subject_id 
+		left join td_homework th on thr.homework_id=th.hk_id 
+		where thr.student_id=#{studentId} 
+		<if test="name != null and name !=''">
+		 and th.hk_name like CONCAT('%',#{name},'%')
+		</if>
+		order by thr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<!-- 该学生课后作业总数 -->
+	<select id="getCountByStudentId" resultType="Integer">
+		select count(*) from
+		td_homework_record  hr left join tb_student s on hr.student_id=s.student_id where 1=1
+		<if test="studentName != null and studentName !=''">
+		 and s.student_name like CONCAT('%','${studentName}','%')
+		</if>
+		
+		and hr.student_id=#{studentId}
+	</select>
+	<!-- 查该学生该考卷的信息 -->
+	<select id="getByStuIdandHomeId" resultMap="HomeworkRecordMap">
+		select * from
+		td_homework_record ttr left join tb_student ts on ttr.student_id=ts.student_id where
+		ttr.student_id=#{studentId} and ttr.homework_id=#{homeworkId};
+	</select>
+	<update id="updateHomeworkStatus" parameterType="com.db.entity.HomeworkRecord">
+	update td_homework_record
+	<set>
+		update_time=#{updateTime}
+		<if test="status != null">
+			,status=#{status}
+		</if>
+		<if test="score !=null and score != ''">
+			,score=#{score}
+		</if>
+		<if test="totalTime !=null and totalTime != ''">
+			,total_time=#{totalTime}
+		</if>
+		<if test="writeNumber !=null">
+			,write_number=#{writeNumber}
+		</if>
+	</set>
+	where student_id=#{studentId} and homework_id=#{homeworkId};
+</update>
+
+<update id="updateHomeworkRecord" parameterType="com.db.entity.HomeworkRecord">
+	update td_homework_record
+	<set>
+		update_time=#{updateTime}
+		<if test="status != null">
+			,status=#{status}
+		</if>
+		<if test="score !=null and score != ''">
+			,score=#{score}
+		</if>
+		<if test="totalTime !=null and totalTime != ''">
+			,total_time=#{totalTime}
+		</if>
+		<if test="writeNumber !=null">
+			,write_number=#{writeNumber}
+		</if>
+	</set>
+	where id=#{id}
+</update>
+	
+	<update id="updateScoreByStuIdandHomId" parameterType="com.db.entity.HomeworkRecord">
+		update td_homework_record set update_time=#{updateTime},
+		score=#{score},write_number=#{writeNumber},total_time=#{totalTime} 
+		where student_id=#{studentId} and homework_id=#{homeworkId};
+	</update>
+	
+	<!-- 主观题加一 -->
+	<update id="updateWriteNumber" parameterType="com.db.entity.HomeworkRecord">
+	update td_homework_record set update_time=#{updateTime},write_number=#{writeNumber} 
+	   where student_id=#{studentId} and homework_id=#{homeworkId};
+	</update>
+	
+	<select id="gethomeworkTotalCount" resultType="int">
+	  select count(*) from td_homework_record where student_id=#{studentId} and status=1 or status=2
+	</select>
+	
+	<delete id="deleteByStuIdandHomeId">
+		delete from td_homework_record where student_id=#{studentId} and homework_id=#{homeworkId};
+	</delete>
+	<!--  hr left join tb_student s on hr.student_id=s.student_id-->
+	<select id="getCount" resultType="int">
+	select count(*) from
+		td_homework_record   where 1=1
+		<if test="classId != null">
+		  and class_id=#{classId} 
+		</if>
+		<if test="subjectId != null">
+		 and subject=#{subjectId} 
+		</if>
+		<if test="paperId != null">
+		 and homework_id=#{paperId}
+		</if>
+	</select>
+	<select id="finHomeworkRecord" resultMap="HomeworkRecordMap">
+	SELECT * FROM td_homework_record tr 
+	  LEFT JOIN tb_student s ON tr.student_id=s.student_id
+	  LEFT JOIN tb_class_no cn ON tr.class_id=cn.class_id
+	  LEFT JOIN td_homework h ON tr.homework_id=h.hk_id
+	  LEFT JOIN tb_subject sub ON tr.subject=sub.subject_id
+	   WHERE 1=1
+	   <if test="classId != null">
+		  and tr.class_id=#{classId} 
+		</if>
+		<if test="subjectId != null">
+		 and tr.subject=#{subjectId} 
+		</if>
+		<if test="paperId != null">
+		 and tr.homework_id =#{paperId}
+		</if>
+		<if test="studentName != null and studentName !=''">
+		 and s.student_name like CONCAT('%','${studentName}','%')
+		</if>
+		 order by tr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<delete id="deleteRecordById" parameterType="Integer">
+	   delete from td_homework_record where id=#{id}
+	</delete>
+	<select id="findClassHomeworkAnalyList" resultMap="HomeworkRecordMap">
+	select * from td_homework_record 
+      	where class_id=#{classId} and homework_id=#{homeworkId}
+	</select>
+</mapper> 

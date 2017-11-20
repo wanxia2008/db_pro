@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.SeasonTypeService">
+	<resultMap type="com.db.entity.SeasonType" id="BaseResultMap">
+		<result column="season_id" property="seasonId" jdbcType="INTEGER" />
+		<result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+
+	</resultMap>
+
+	<select id="getSeasontype" resultMap="BaseResultMap">
+		select * from tb_season_type
+	</select>
+</mapper>

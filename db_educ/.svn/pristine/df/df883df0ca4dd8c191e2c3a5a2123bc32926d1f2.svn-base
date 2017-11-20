@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.QuestionReadService">
+	<resultMap id="ReadMap" type="com.db.entity.QuestionRead">
+		<result column="read_id" property="readId" jdbcType="INTEGER" />
+		<result column="read_desc" property="readDesc" jdbcType="VARCHAR" />
+		<result column="read_optiontitle" property="Optiontitle"
+			jdbcType="VARCHAR" />
+		<result column="read_optionA" property="OptionA_read" jdbcType="VARCHAR" />
+		<result column="read_optionB" property="OptionB_read" jdbcType="VARCHAR" />
+		<result column="read_optionC" property="OptionC_read" jdbcType="VARCHAR" />
+		<result column="read_optionD" property="OptionD_read" jdbcType="VARCHAR" />
+		<result column="read_answer" property="answer_read" jdbcType="VARCHAR" />
+		<result column="read_answer_desc" property="answerDesc_read"
+			jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="knowledge" property="knowledge" jdbcType="INTEGER" />
+		<result column="knowledge_begin" property="knowledgeBegin"
+			jdbcType="VARCHAR" />
+		<result column="knowledge_end" property="knowledgeEnd"
+			jdbcType="VARCHAR" />
+		<result column="question_degree" property="degree_read"
+			jdbcType="INTEGER" />
+		<result column="question_type" property="type" jdbcType="INTEGER" />
+		<result column="question_source" property="source_read"
+			jdbcType="INTEGER" />
+		<result column="question_score" property="score_read" jdbcType="FLOAT" />
+		<result column="tag_id" property="tag_read" jdbcType="VARCHAR" />
+		<result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+		<result column="used_count" property="useCount" jdbcType="INTEGER" />
+		<result column="right_count" property="rightCount" jdbcType="INTEGER" />
+		<result column="fault_count" property="faultCount" jdbcType="INTEGER" />
+		<result column="is_public" property="ispublic_read" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="is_remove" property="isRemove" jdbcType="INTEGER" />
+		<association property="paperDetails" javaType="com.db.entity.PaperDetails">
+			<id property="id" column="id" />
+			<result property="questionId" column="question_id" />
+			<result property="paperId" column="paper_id" />
+			<result property="value" column="value" />
+			<result property="number" column="number" />
+			<result property="createTime" column="create_time" />
+			<result property="paperType" column="paper_type" />
+		</association>
+
+		<association property="homeworkDetails" javaType="com.db.entity.HomeworkDetails">
+			<id property="hdId" column="hd_id" />
+			<result column="question_id" property="questionId" jdbcType="INTEGER" />
+			<result column="question_type" property="questionType"
+				jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="value" property="value" jdbcType="INTEGER" />
+			<result column="create_time" property="createTime" />
+			<result column="update_time" property="updateTime" />
+		</association>
+
+		<association property="myMistakes" javaType="com.db.entity.MyMistakes">
+			<id column="mistakes_id" property="mistakesId" jdbcType="INTEGER" />
+			<result column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="mistakes_number" property="mistakesNumber"
+				jdbcType="INTEGER" />
+			<result column="topic_type" property="topicType" jdbcType="INTEGER" />
+			<result column="current_mistakes" property="currentMistakes"
+				jdbcType="INTEGER" />
+			<result column="question_id" property="questionId" jdbcType="INTEGER" />
+			<result column="value" property="value" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="create_time" property="createTime" />
+		</association>
+
+		<association property="questionsType" javaType="com.db.entity.QuestionsType">
+			<id column="topic_id" property="topicId" jdbcType="INTEGER" />
+			<result column="topic_name" property="topicName" jdbcType="VARCHAR" />
+			<result column="create_time" property="createTime" />
+			<result column="update_time" property="updateTime" />
+			<result column="typic_order" property="typicOrder" jdbcType="INTEGER" />
+		</association>
+		<association property="paperAnswer" javaType="com.db.entity.PaperAnswer">
+			<id column="answer_id" property="answerId" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="write_answer" property="writeAnswer" jdbcType="VARCHAR" />
+			<result column="is_true" property="isTrue" jdbcType="INTEGER" />
+			<result column="question_type" property="questionType"
+				jdbcType="INTEGER" />
+		</association>
+		<association javaType="com.db.entity.HomeworkAnswer"
+			property="homeworkanswer">
+			<id column="answer_id" property="answerId" jdbcType="INTEGER" />
+			<result column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="question_id" property="questionId" jdbcType="INTEGER" />
+			<result column="question_type" property="questionType"
+				jdbcType="INTEGER" />
+			<result column="write_answer" property="writeAnswer" jdbcType="VARCHAR" />
+			<result column="value" property="value" jdbcType="INTEGER" />
+			<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+			<result column="is_true" property="isTrue" jdbcType="INTEGER" />
+		</association>
+
+		<association property="subject2" javaType="com.db.entity.Subject">
+			<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+			<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="grade" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="teacher" javaType="com.db.entity.Teacher">
+			<id column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+			<result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+	<select id="getQuestionReadById" resultMap="ReadMap">
+		select * from
+		tb_paper_details p left join tb_question_read q on
+		p.question_id=q.read_id
+		where p.paper_id=#{0} limit #{1},#{2}
+	</select>
+
+	<select id="getHomeworkDeta" resultMap="ReadMap">
+		select * from td_homework_details thd right join tb_question_read tqr
+		on
+		thd.question_id=tqr.read_id
+		where thd.paper_id=#{0} and
+		thd.question_type=#{1} limit #{2},#{3}
+		<!-- select * from td_homework_details h left join tb_question_read q on -->
+		<!-- h.question_id=q.read_id -->
+		<!-- where h.student_id=#{0} limit #{1},#{2} -->
+	</select>
+
+	<select id="getReadById" parameterType="Integer" resultMap="ReadMap">
+		select * from tb_question_read where read_id=#{readId};
+	</select>
+
+	<select id="getPaperAnswerReadById" resultMap="ReadMap">
+		select * from tb_question_read where read_id=#{readId};
+	</select>
+
+	<insert id="addParent" parameterType="com.db.entity.QuestionRead"
+		useGeneratedKeys="true" keyProperty="readId">
+		insert into
+		tb_question_read(subject,question_type,teacher_id,create_time,
+		knowledge,read_desc,is_public,question_degree,question_source
+		<if test="tag_read!=null and tag_read!=''">
+			<![CDATA[,tag_id]]>
+		</if>
+		<if test="knowledgeBegin !=null and knowledgeBegin !=''">
+			<![CDATA[,knowledge_begin]]>
+		</if>
+		<if test="knowledgeEnd !=null and knowledgeEnd !=''">
+			<![CDATA[,knowledge_end]]>
+		</if>
+
+		) values
+		(#{subject},#{type},#{teacherId},#{createTime},#{knowledge},
+		#{readDesc},#{ispublic_read},#{degree_read},#{source_read}
+		<if test="tag_read!=null and tag_read!=''">
+			<![CDATA[,#{tag_read}]]>
+		</if>
+		<if test="knowledgeBegin !=null and knowledgeBegin !=''">
+			<![CDATA[,#{knowledgeBegin}]]>
+		</if>
+		<if test="knowledgeEnd !=null and knowledgeEnd !=''">
+			<![CDATA[,#{knowledgeEnd}]]>
+		</if>
+		)
+	</insert>
+
+	<insert id="addAllReadByparentid" parameterType="com.db.entity.QuestionRead"
+		useGeneratedKeys="true" keyProperty="readId">
+		insert into
+		tb_question_read(teacher_id,create_time,subject,question_type
+		<if test="Optiontitle!=null and Optiontitle!=''">
+			<![CDATA[,read_optiontitle]]>
+		</if>
+		<if test="OptionA_read!=null and OptionA_read!=''">
+			<![CDATA[,read_optionA]]>
+		</if>
+		<if test="OptionB_read!=null and OptionB_read!=''">
+			<![CDATA[,read_optionB]]>
+		</if>
+		<if test="OptionC_read!=null and OptionC_read!=''">
+			<![CDATA[,read_optionC]]>
+		</if>
+		<if test="OptionD_read!=null and OptionD_read!=''">
+			<![CDATA[,read_optionD]]>
+		</if>
+		<if test="answer_read!=null and answer_read!=''">
+			<![CDATA[,read_answer]]>
+		</if>
+		<if test="answerDesc_read!=null and answerDesc_read!=''">
+			<![CDATA[,read_answer_desc]]>
+		</if>
+		<if test="parentId!=null and parentId!=''">
+			<![CDATA[,parent_id]]>
+		</if>
+		<if test="degree_read!=null and degree_read!=''">
+			<![CDATA[,question_degree]]>
+		</if>
+		<if test="source_read!=null and source_read!=''">
+			<![CDATA[,question_source]]>
+		</if>
+		<if test="score_read!=null and score_read!=''">
+			<![CDATA[,question_score]]>
+		</if>
+		<if test="useCount!=null and useCount!=''">
+			<![CDATA[,used_count]]>
+		</if>
+		<if test="rightCount!=null and rightCount!=''">
+			<![CDATA[,right_count]]>
+		</if>
+		<if test="faultCount!=null and faultCount!=''">
+			<![CDATA[,fault_count]]>
+		</if>
+		<if test="tag_read!=null and tag_read!=''">
+			<![CDATA[,tag_id]]>
+		</if>
+		) values
+		(#{teacherId},#{createTime},#{subject},#{type}
+		<if test="Optiontitle!=null and Optiontitle!=''">
+			<![CDATA[,#{Optiontitle}]]>
+		</if>
+		<if test="OptionA_read!=null and OptionA_read!=''">
+			<![CDATA[,#{OptionA_read}]]>
+		</if>
+		<if test="OptionB_read!=null and OptionB_read!=''">
+			<![CDATA[,#{OptionB_read}]]>
+		</if>
+		<if test="OptionC_read!=null and OptionC_read!=''">
+			<![CDATA[,#{OptionC_read}]]>
+		</if>
+		<if test="OptionD_read!=null and OptionD_read!=''">
+			<![CDATA[,#{OptionD_read}]]>
+		</if>
+		<if test="answer_read!=null and answer_read!=''">
+			<![CDATA[,#{answer_read}]]>
+		</if>
+		<if test="answerDesc_read!=null and answerDesc_read!=''">
+			<![CDATA[,#{answerDesc_read}]]>
+		</if>
+		<if test="parentId!=null and parentId!=''">
+			<![CDATA[,#{parentId}]]>
+		</if>
+		<if test="degree_read!=null and degree_read!=''">
+			<![CDATA[,#{degree_read}]]>
+		</if>
+		<if test="source_read!=null and source_read!=''">
+			<![CDATA[,#{source_read}]]>
+		</if>
+		<if test="score_read!=null and score_read!=''">
+			<![CDATA[,#{score_read}]]>
+		</if>
+		<if test="useCount!=null and useCount!=''">
+			<![CDATA[,#{useCount}]]>
+		</if>
+		<if test="rightCount!=null and rightCount!=''">
+			<![CDATA[,#{rightCount}]]>
+		</if>
+		<if test="faultCount!=null and faultCount!=''">
+			<![CDATA[,#{faultCount}]]>
+		</if>
+		<if test="tag_read!=null and tag_read!=''">
+			<![CDATA[,#{tag_read}]]>
+		</if>
+		)
+	</insert>
+
+	<!-- 只能拿自己和别人公开的题目 -->
+	<select id="getReadByRand" resultMap="ReadMap">
+		select * from tb_question_read tqr left join tb_questions_type tqt on
+		tqr.question_type=tqt.topic_id
+		<where>
+			(tqr.teacher_id=#{teacherId} or tqr.is_public=1)
+			and tqr.parent_id is NULL
+			<if test="type!=null and type!=''">
+				and tqr.question_type=#{type}
+			</if>
+			<if test="subject!=null and subject!=''">
+				and tqr.subject=#{subject}
+			</if>
+			<if test="score!=null and score!=''">
+				and tqr.question_score=#{score}
+			</if>
+			<if test="listTag !=null and listTag !=''">
+				and tqr.tag_id in
+				<foreach collection="listTag" item="listTag" open="("
+					separator="," close=")">
+					#{listTag}
+				</foreach>
+			</if>
+			<if test="grade !=null">
+				and tqr.knowledge=#{grade}
+			</if>
+			<if test="science !=null">
+				and tqr.question_degree=#{science}
+			</if>
+		</where>
+		order by rand() limit #{number};
+	</select>
+	<!-- 拿全部的题目 -->
+	<select id="getReadByRandAdmin" resultMap="ReadMap">
+		select * from tb_question_read tqr left join tb_questions_type tqt on
+		tqr.question_type=tqt.topic_id
+		where tqr.parent_id is NULL and
+		tqr.is_remove&lt;&gt;1
+		<if test="type!=null and type!=''">
+			and tqr.question_type=#{type}
+		</if>
+		<if test="subject!=null">
+			and tqr.subject=#{subject}
+		</if>
+		<!-- <if test="listTag !=null and listTag !=''"> -->
+		<!-- and tqr.tag_id in -->
+		<!-- <foreach collection="listTag" item="listTag" -->
+		<!-- open="(" separator="," close=")"> -->
+		<!-- #{listTag} -->
+		<!-- </foreach> -->
+		<!-- </if> -->
+		<choose>
+			<when test="tags10!=null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags8}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags9}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags10}','%'))
+			</when>
+			<when test="tags9!=null and tags10==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags8}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags9}','%'))
+			</when>
+			<when test="tags8!=null and tags9==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags8}','%'))
+			</when>
+			<when test="tags7!=null and tags8==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%'))
+			</when>
+			<when test="tags6!=null and tags7==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%'))
+			</when>
+			<when test="tags5!=null and tags6==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%'))
+			</when>
+			<when test="tags4!=null and tags5==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%'))
+			</when>
+			<when test="tags3!=null and tags4==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%'))
+			</when>
+			<when test="tags2!=null and tags3==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%'))
+			</when>
+			<when test="tags1!=null and tags2==null">
+				AND tqr.tag_id LIKE CONCAT('%','${tags1}','%')
+			</when>
+		</choose>
+		<if test="grade !=null">
+			and tqr.knowledge=#{grade}
+		</if>
+		<if test="science !=null">
+			and tqr.question_degree=#{science}
+		</if>
+		order by rand() limit #{number};
+	</select>
+
+	<!-- 拿全部的题目 -->
+	<select id="getReadByRandAdminIsPublic" resultMap="ReadMap">
+		select * from tb_question_read tqr left join tb_questions_type tqt on
+		tqr.question_type=tqt.topic_id
+		where (tqr.teacher_id=#{teacherId} or tqr.is_public=1) and tqr.parent_id is
+		NULL and tqr.is_remove&lt;&gt;1
+		<if test="type!=null and type!=''">
+			and tqr.question_type=#{type}
+		</if>
+		<if test="subject!=null">
+			and tqr.subject=#{subject}
+		</if>
+		<choose>
+			<when test="tags10!=null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags8}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags9}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags10}','%'))
+			</when>
+			<when test="tags9!=null and tags10==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags8}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags9}','%'))
+			</when>
+			<when test="tags8!=null and tags9==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags8}','%'))
+			</when>
+			<when test="tags7!=null and tags8==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags7}','%'))
+			</when>
+			<when test="tags6!=null and tags7==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags6}','%'))
+			</when>
+			<when test="tags5!=null and tags6==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags5}','%'))
+			</when>
+			<when test="tags4!=null and tags5==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%') OR tqr.tag_id LIKE
+				CONCAT('%','${tags4}','%'))
+			</when>
+			<when test="tags3!=null and tags4==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%')
+				OR tqr.tag_id LIKE
+				CONCAT('%','${tags3}','%'))
+			</when>
+			<when test="tags2!=null and tags3==null">
+				AND (tqr.tag_id LIKE CONCAT('%','${tags1}','%') OR
+				tqr.tag_id LIKE
+				CONCAT('%','${tags2}','%'))
+			</when>
+			<when test="tags1!=null and tags2==null">
+				AND tqr.tag_id LIKE CONCAT('%','${tags1}','%')
+			</when>
+		</choose>
+		<if test="grade !=null">
+			and tqr.knowledge=#{grade}
+		</if>
+		<if test="science !=null">
+			and tqr.question_degree=#{science}
+		</if>
+		order by rand() limit #{number};
+	</select>
+
+	<select id="getReadByTeacherId" parameterType="Integer"
+		resultMap="ReadMap">
+		select * from tb_question_read qr 
+		left join tb_teacher t on qr.teacher_id=t.teacher_id
+		left join tb_subject s on qr.subject=s.subject_id
+		left join tb_grade g on qr.knowledge=g.grade_id
+		where qr.teacher_id=#{teacherId} and qr.is_remove &lt;&gt;1
+		<!-- and parent_id="" -->
+		and parent_id is null
+		<if test="handoutType != null and handoutType != ''">
+			and qr.question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and qr.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qr.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId !=null and tagId !=''">
+			and qr.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qr.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qr.knowledge=#{gradeId}
+		</if>
+		order by qr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<select id="getReadByTeacherIdIsPublic" parameterType="Integer"
+		resultMap="ReadMap">
+		select * from tb_question_read qr 
+		left join tb_subject s on qr.subject=s.subject_id
+		LEFT JOIN tb_teacher t ON qr.teacher_id=t.teacher_id
+		left join tb_grade g on qr.knowledge=g.grade_id
+		where (qr.teacher_id=#{teacherId} or qr.is_public=1) and qr.is_remove &lt;&gt;1 and qr.parent_id is null
+		<!-- and parent_id="" -->
+		<if test="handoutType != null and handoutType != ''">
+			and qr.question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and qr.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qr.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and qr.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qr.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qr.knowledge=#{gradeId}
+		</if>
+		order by qr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+
+	<update id="updateQuestionRead" parameterType="com.db.entity.QuestionRead">
+		update tb_question_read set
+		subject=#{subject},question_type=#{type},teacher_id=#{teacherId},
+		update_time=#{updateTime}
+		<if test="readDesc!=null and readDesc!=''">
+			<![CDATA[,read_desc=#{readDesc}]]>
+		</if>
+		<if test="Optiontitle!=null and Optiontitle!=''">
+			<![CDATA[,read_optiontitle=#{Optiontitle}]]>
+		</if>
+		<if test="OptionA!=null and OptionA!=''">
+			<![CDATA[,read_optionA=#{OptionA}]]>
+		</if>
+		<if test="OptionB!=null and OptionB!=''">
+			<![CDATA[,read_optionB=#{OptionB}]]>
+		</if>
+		<if test="OptionC!=null and OptionC!=''">
+			<![CDATA[,read_optionC=#{OptionC}]]>
+		</if>
+		<if test="OptionD!=null and OptionD!=''">
+			<![CDATA[,read_optionD=#{OptionD}]]>
+		</if>
+		<if test="answer!=null and answer!=''">
+			<![CDATA[,read_answer=#{answer}]]>
+		</if>
+		<if test="answerDesc!=null and answerDesc!=''">
+			<![CDATA[,read_answer_desc=#{answerDesc}]]>
+		</if>
+		<if test="parentId!=null and parentId!=''">
+			<![CDATA[,parent_id=#{parentId}]]>
+		</if>
+		<if test="knowledge!=null and knowledge!=''">
+			<![CDATA[,knowledge=#{knowledge}]]>
+		</if>
+		<if test="knowledgeBegin!=null and knowledgeBegin!=''">
+			<![CDATA[,knowledge_begin=#{knowledgeBegin}]]>
+		</if>
+		<if test="knowledgeEnd!=null and knowledgeEnd!=''">
+			<![CDATA[,knowledge_end=#{knowledgeEnd}]]>
+		</if>
+		<if test="degree!=null and degree!=''">
+			<![CDATA[,question_degree=#{degree}]]>
+		</if>
+		<if test="type!=null and type!=''">
+			<![CDATA[,question_type=#{type}]]>
+		</if>
+		<if test="source!=null and source!=''">
+			<![CDATA[,question_source=#{source}]]>
+		</if>
+		<if test="score!=null and score!=''">
+			<![CDATA[,question_score=#{score}]]>
+		</if>
+		<if test="tag!=null and tag!=''">
+			<![CDATA[,tag_id=#{tag}]]>
+		</if>
+		<if test="useCount!=null and useCount!=''">
+			<![CDATA[,used_count=#{useCount}]]>
+		</if>
+		<if test="rightCount!=null and rightCount!=''">
+			<![CDATA[,right_count=#{rightCount}]]>
+		</if>
+		<if test="faultCount!=null and faultCount!=''">
+			<![CDATA[,fault_count=#{faultCount}]]>
+		</if>
+		<if test="ispublic!=null and ispublic!=''">
+			<![CDATA[,is_public=#{ispublic}]]>
+		</if>
+		where read_id=#{readId};
+	</update>
+
+	<delete id="deleteQuestionSingle" parameterType="Integer">
+		delete * from
+		tb_question_mulitchoice where read_id=#{readId};
+	</delete>
+
+
+	<select id="kesListdetails" resultMap="ReadMap">
+		select * from
+		tb_my_mistakes m left join tb_question_read q on
+		m.question_id=q.read_id
+		where m.student_id=#{0} limit #{1},#{2}
+	</select>
+	<select id="thePapersById" resultMap="ReadMap">
+		select * from
+		tb_paper_details mp right join tb_question_read q on
+		mp.question_id=q.read_id LEFT JOIN tb_questions_type qqq ON
+		mp.question_type=qqq.topic_id
+		where mp.paper_id=#{paperId} and
+		mp.question_type=4 
+		<if test="pageNo != null and pageSize != null">
+		 limit #{pageNo},#{pageSize}
+		</if>
+	</select>
+	<select id="theHomeworkDetailsById" resultMap="ReadMap">
+		select * from td_homework_details hd left join tb_question_read q on
+		hd.question_id=q.read_id LEFT JOIN tb_questions_type qqq ON
+		hd.question_type=qqq.topic_id
+		where hd.paper_id=#{paperId} and hd.question_type=#{questionType} limit
+		#{pageNo},#{pageSize}
+	</select>
+	<select id="getPaper_answerDetails" resultMap="ReadMap">
+		select * from td_homework_answer pa left join tb_question_read qr on
+		pa.question_id=qr.read_id
+		LEFT JOIN tb_questions_type qqq ON pa.question_type=qqq.topic_id
+		where qr.parent_id=#{parentId} and pa.paper_id=#{paperId} and
+		pa.student_id=#{studentId} AND pa.question_type=4
+	</select>
+	<select id="getHomework_answerDetails" resultMap="ReadMap">
+		select * from td_paper_answer pa left join tb_question_read qr on
+		pa.question_id=qr.read_id
+		LEFT JOIN tb_questions_type qqq ON pa.question_type=qqq.topic_id
+		where pa.paper_id=#{paperId} and pa.student_id=#{studentId} and
+		pa.question_type=4 and qr.parent_id=#{parentId}
+	</select>
+
+	<select id="theHomeworkById" resultMap="ReadMap">
+		select * from
+		td_homework_details thd right join tb_question_read q on
+		thd.question_id=q.read_id
+		where thd.paper_id=#{paperId} and
+		thd.question_type=#{type} 
+		<if test="pageNo != null and pageSize != null">
+		limit #{pageNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="getReadChildByParentId" resultMap="ReadMap">
+		SELECT * FROM
+		tb_question_read WHERE parent_id=#{parentId};
+	</select>
+	<select id="getcount" resultType="Integer">
+		select count(*) from tb_question_read where is_remove &lt;&gt;1 and
+		parent_id is null and teacher_id=#{teacherId}
+		<if test="handoutType != null and handoutType != ''">
+			and question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and question_degree=#{questionDegree}
+		</if>
+		<if test="tagId !=null and tagId !=''">
+			and tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and knowledge=#{gradeId}
+		</if>
+	</select>
+
+	<select id="getconutIspublic" resultType="Integer">
+		select count(*) from tb_question_read where (teacher_id=#{teacherId}
+		or is_public=1) and is_remove &lt;&gt;1
+		and parent_id is null
+		<if test="handoutType != null and handoutType != ''">
+			and question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and knowledge=#{gradeId}
+		</if>
+	</select>
+
+	<select id="thePapersAnswerById" resultMap="ReadMap">
+		SELECT * FROM
+		td_paper_answer pa left join tb_questions_type qt on
+		pa.question_type=qt.topic_id
+		RIGHT JOIN tb_question_read qs ON
+		pa.question_id=qs.read_id
+		WHERE
+		pa.student_id=#{0} AND pa.paper_id=#{1}
+		AND pa.question_type=#{2}
+		limit #{3},#{4}
+	</select>
+	<select id="theHomeworkAnswerById" resultMap="ReadMap">
+		SELECT * FROM
+		td_homework_answer pa left join tb_questions_type qt on
+		pa.question_type=qt.topic_id
+		RIGHT JOIN tb_question_read qs ON
+		pa.question_id=qs.read_id
+		WHERE
+		pa.student_id=#{0} AND pa.paper_id=#{1}
+		AND pa.question_type=#{2}
+		limit #{3},#{4}
+	</select>
+
+	<select id="getReadChildByParentIdPaer" resultMap="ReadMap">
+		SELECT * FROM
+		tb_question_read qr left join td_paper_answer pa on
+		qr.read_id=pa.question_id
+		WHERE qr.parent_id=#{parentId};
+
+	</select>
+	<select id="findPaperInfoDetails" resultMap="ReadMap">
+		select * from
+		tb_paper_details h left join tb_question_read q on
+		h.question_id=q.read_id where h.paper_id=#{paperId} and
+		h.question_type=4
+	</select>
+	<update id="deleteQuestionRead" parameterType="com.db.entity.QuestionRead">
+		update
+		tb_question_read set is_remove=1 where read_id=#{readId};
+	</update>
+	<update id="updateIspublic" parameterType="com.db.entity.QuestionRead">
+		update
+		tb_question_read set
+		is_public=#{ispublic_read},update_time=#{updateTime} where
+		read_id=#{readId};
+	</update>
+	<update id="updateUsecount" parameterType="com.db.entity.QuestionRead">
+		update
+		tb_question_read set used_count=#{useCount},update_time=#{updateTime}
+		where read_id=#{readId};
+	</update>
+	<update id="updateQuestion" parameterType="com.db.entity.QuestionSingleChoice">
+		update tb_question_read
+		<set>
+			update_time=#{updateTime}
+			<if test="subject !=null and subject !=''">
+				,subject=#{subject}
+			</if>
+			<if test="type !=null and type !=''">
+				,question_type=#{type}
+			</if>
+			<if test="readDesc!=null and readDesc!=''">
+				,read_desc=#{readDesc}
+			</if>
+			<if test="Optiontitle !=null and Optiontitle !=''">
+				,read_optiontitle=#{Optiontitle}
+			</if>
+			<if test="OptionA_read !=null and OptionA_read !=''">
+				,read_optionA=#{OptionA_read}
+			</if>
+			<if test="OptionB_read !=null and OptionB_read !=''">
+				,read_optionB=#{OptionB_read}
+			</if>
+			<if test="OptionC_read !=null and OptionC_read !=''">
+				,read_optionC=#{OptionC_read}
+			</if>
+			<if test="OptionD_read !=null and OptionD_read !=''">
+				,read_optionD=#{OptionD_read}
+			</if>
+			<if test="answer_read !=null and answer_read !=''">
+				,read_answer=#{answer_read}
+			</if>
+			<if test="answerDesc_read !=null and answerDesc_read !=''">
+				,read_answer_desc=#{answerDesc_read}
+			</if>
+			<if test="knowledge!=null and knowledge!=''">
+				,knowledge=#{knowledge}
+			</if>
+			<if test="knowledgeBegin!=null and knowledgeBegin!=''">
+				,knowledge_begin=#{knowledgeBegin}
+			</if>
+			<if test="knowledgeEnd!=null and knowledgeEnd!=''">
+				,knowledge_end=#{knowledgeEnd}
+			</if>
+			<if test="degree_read !=null and degree_read !=''">
+				,question_degree=#{degree_read}
+			</if>
+			<if test="type!=null and type!=''">
+				,question_type=#{type}
+			</if>
+			<if test="source_read !=null and source_read !=''">
+				,question_source=#{source_read}
+			</if>
+			<if test="score_read !=null and score_read !=''">
+				,question_score=#{score_read}
+			</if>
+			<if test="tag_read !=null and tag_read !=''">
+				,tag_id=#{tag_read}
+			</if>
+		</set>
+		where read_id=#{readId};
+	</update>
+	<select id="findHomeworkDetails" resultMap="ReadMap">
+		select * from
+		td_homework_details h left join tb_question_read q on
+		h.question_id=q.read_id
+		where h.paper_id=#{paperId} and
+		h.question_type=4
+	</select>
+	<select id="getReadTageId" resultMap="ReadMap">
+		select * from tb_question_read where tag_id like CONCAT('%','${tagId}','%')
+		and is_remove &lt;&gt;1
+	</select>
+	<select id="getQuestionSource" resultMap="ReadMap">
+		select * from tb_question_read where question_source=#{sourceId} and
+		is_remove &lt;&gt;1
+	</select>
+	<select id="getknowledgeBegin" resultMap="ReadMap">
+		select * from tb_question_read where is_remove &lt;&gt;1 and
+		knowledge_begin=#{lessonId} <!-- or knowledge_end=#{lessonId} -->
+	</select>
+	<select id="getAllQuestionsCount" resultType="Integer">
+		select count(*) from tb_question_read where is_remove &lt;&gt;1
+		and parent_id is null
+		<if test="handoutType != null and handoutType != ''">
+			and question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and knowledge=#{gradeId}
+		</if>
+	</select>
+	<select id="getAllQuestions" resultMap="ReadMap">
+		select * from tb_question_read qr 
+		left join tb_subject s on qr.subject=s.subject_id
+		LEFT JOIN tb_teacher t ON qr.teacher_id=t.teacher_id
+		left join tb_grade g on qr.knowledge=g.grade_id
+		where qr.is_remove &lt;&gt;1 and qr.parent_id is null
+		<!-- and parent_id="" -->
+		<if test="handoutType != null and handoutType != ''">
+			and qr.question_type=#{handoutType}
+		</if>
+		<if test="subject != null and subject != ''">
+			and qr.subject=#{subject}
+		</if>
+
+		<if test="questionDegree != null and questionDegree != ''">
+			and qr.question_degree=#{questionDegree}
+		</if>
+		<if test="tagId != null">
+			and qr.tag_id REGEXP '(^|,)${tagId}($|,)'
+		</if>
+		<if test="isPublic != null">
+			and qr.is_public=#{isPublic}
+		</if>
+		<if test="gradeId != null">
+			and qr.knowledge=#{gradeId}
+		</if>
+		order by qr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getSubjectById" resultMap="ReadMap">
+		select * from tb_question_read where subject=#{subjectId}
+	</select>
+	<update id="updateScore" parameterType="com.db.entity.QuestionRead">
+		update tb_question_read set
+		create_time=#{createTime},question_score=#{score_read}
+		where read_id=#{readId}
+	</update>
+	
+</mapper>

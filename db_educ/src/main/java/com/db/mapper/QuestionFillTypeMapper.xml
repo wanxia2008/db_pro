@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.QuestionFillTypeService">
+   <resultMap type="com.db.entity.QuestionFillType" id="FillTypeMap">
+         <result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="type_name" property="typeName" jdbcType="VARCHAR" />
+		<result column="used_count" property="usedCount" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+   </resultMap>
+
+	<insert id="addFillTypeName" parameterType="com.db.entity.QuestionFillType">
+		insert into tb_question_fill_type
+		(type_name,used_count,create_user,create_time)
+		values(#{typeName},#{usedCount},#{createUser},#{createTime})
+	</insert>
+	<select id="getTypeList" resultMap="FillTypeMap">
+	    select * from tb_question_fill_type where 1=1
+    <if test="typeName != null and typeName !=''">
+       and type_name like CONCAT('%','${typeName}','%')
+    </if>
+            order by create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	
+	<select id="getQuestionFillTypeList" resultMap="FillTypeMap">
+	select * from tb_question_fill_type
+	</select>
+	
+	<select id="getFillTypeCount" resultType="int">
+     select count(*) from tb_question_fill_type where 1=1
+    <if test="typeName != null and typeName !=''">
+       and type_name like CONCAT('%','${typeName}','%')
+    </if>
+    </select>
+   <select id="getAllFillTypeCount" resultType="INT">
+     select count(*) from tb_question_fill_type where 1=1
+     <if test="typeName != null and typeName !=''">
+       and type_name = #{typeName}
+     </if>
+   </select>
+   <update id="savefill" parameterType="com.db.entity.QuestionFillType">
+      update tb_question_fill_type set type_name=#{typeName} where type_id=#{typeId}
+   </update>
+   <delete id="delType" parameterType="INTEGER">
+      delete from tb_question_fill_type where type_id = #{typeId}
+   </delete>
+</mapper>

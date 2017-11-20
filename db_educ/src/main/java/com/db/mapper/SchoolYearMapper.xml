@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.SchoolYearService">
+    <resultMap id="yearMap" type="com.db.entity.SchoolYear">    
+        <result column="id" property="id" jdbcType="INTEGER" />    
+        <result column="school_year" property="year" jdbcType="INTEGER" /> 
+        <result column="create_time" property="createTime" />   
+    </resultMap>    
+
+	<select id="getYear" resultMap="yearMap">
+		select * from tb_school_year
+	</select>
+	
+	<insert id="addYear" parameterType="com.db.entity.SchoolYear">
+		insert into tb_school_year(school_year,create_time) values(#{year},#{createTime});
+	</insert>
+	
+	
+</mapper>

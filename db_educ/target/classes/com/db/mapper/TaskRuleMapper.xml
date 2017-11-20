@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.TaskRuleService">
+	<resultMap type="com.db.entity.TaskRule" id="TaskRuleMap">
+		<result column="rule_id" property="ruleId" jdbcType="INTEGER" />
+		<result column="rule_name" property="ruleName" jdbcType="VARCHAR" />
+            <result column="create_time" property="createTime" /> 
+	</resultMap>
+
+<!--规则列表 -->
+<select id="taskRule" resultMap="TaskRuleMap">
+   select * from tb_task_rule
+</select>
+<select id="getCount" resultType="int">
+  select count(*) from tb_task_rule where 1=1
+  <if test="ruleName != null and ruleName != ''">
+      and rule_name like CONCAT('%','${ruleName}','%')
+  </if> 
+</select>
+<select id="taskRuleList" resultMap="TaskRuleMap">
+     select * from tb_task_rule  where 1=1
+  <if test="ruleName != null and ruleName != ''">
+      and rule_name like CONCAT('%','${ruleName}','%')
+  </if> 
+  order by create_time desc limit #{pageNo},#{pageSize}
+</select>
+<insert id="addTaskRole" parameterType="com.db.entity.TaskRule">
+      insert into tb_task_rule (rule_name,create_time)
+                 values(#{ruleName},#{createTime})
+</insert>
+<delete id="deleteTaskRoleById" parameterType="int">
+delete from tb_task_rule where rule_id=#{ruleId}
+
+</delete>
+<select id="getTaskRuleName" resultMap="TaskRuleMap">
+   select * from tb_task_rule where rule_name=#{ruleName}
+</select>
+<select id="getTaskById" resultMap="TaskRuleMap">
+ select * from tb_task_rule where rule_id=#{ruleId}
+</select>
+<update id="updateTaskRole" parameterType="com.db.entity.TaskRule">
+   update tb_task_rule set rule_name=#{ruleName} where rule_id=#{ruleId}
+</update>
+</mapper>

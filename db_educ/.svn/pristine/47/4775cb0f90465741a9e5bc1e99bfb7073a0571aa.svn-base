@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.QuestionTagService">
+	<resultMap id="QuestionTagMap" type="com.db.entity.QuestionTag">
+		<result column="tag_id" property="tagId" jdbcType="INTEGER" />
+		<result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" />
+		<result column="create_user" property="createUser" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER"/>
+		<result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+		<result column="tag_level" property="tagLevel" jdbcType="INTEGER"/>
+		<association property="subject2" javaType="com.db.entity.Subject">
+		 <id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+		 <result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		</association>
+		<association property="grade2" javaType="com.db.entity.Grade">
+		 <id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		 <result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+	<!-- 标签列表 -->
+	<select id="questionTag" resultMap="QuestionTagMap">
+		select * from tb_question_tag
+	</select>
+	<select id="findQuestionTagPidList" resultMap="QuestionTagMap">
+	select * from tb_question_tag where parent_id =#{parentId}
+	</select>
+	<!-- 添加标签 -->
+	<insert id="saveQuestionTag" parameterType="com.db.entity.QuestionTag"
+		useGeneratedKeys="true" keyProperty="tagId">
+		insert into tb_question_tag(tag_name,create_user,create_time,subject,grade,parent_id,tag_level)
+		values(#{tagName},#{createUser},#{createTime},#{subject},#{grade},#{parentId},#{tagLevel})
+	</insert>
+	<select id="tagList" resultMap="QuestionTagMap">
+		select * from tb_question_tag t 
+		left join tb_subject sub on t.subject=sub.subject_id
+		left join tb_grade g on t.grade=g.grade_id
+		 where 1=1
+		<if test="tagName != null and tagName !=''">
+			and t.tag_name like CONCAT('%','${tagName}','%')
+		</if>
+		<if test="type == 5 or type == 6">
+	<if test="subject != null">
+		and subject=${subject}
+	</if>
+	</if>
+		order by t.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<!-- or tag_name like '%${tagName}%' -->
+	<select id="getIsName" resultMap="QuestionTagMap">
+		select * from tb_question_tag where tag_name=#{tagName} 
+		and subject=#{subject} and grade=#{grade}
+	</select>
+	<select id="getCount" resultType="int">
+		select count(*) from tb_question_tag where 1=1
+		<if test="tagName != null and tagName !=''">
+			and tag_name like CONCAT('%','${tagName}','%')
+		</if>
+		
+		<if test="grade != null">
+			and grade=${grade}
+		</if>
+		<if test="type == 5 or type == 6">
+	<if test="subjectId != null">
+		and subject=${subjectId}
+	</if>
+</if>
+	</select>
+	
+	
+	<select id="getTagByPage" resultMap="QuestionTagMap">
+		select * from tb_question_tag where 1=1
+		<if test="subjectId != null">
+			and subject=${subjectId}
+		</if>
+		<if test="grade != null">
+			and grade=${grade}
+		</if>
+		 limit #{pageNo},#{pageSize};
+	</select>
+	<select id="getTagBySearch" resultMap="QuestionTagMap">
+		select * from tb_question_tag where 
+		tag_name like '%${content}%' and subject=#{subjectId} and grade=#{grade} limit #{pageNo},#{pageSize};
+	</select>
+	<select id="getTagById" resultMap="QuestionTagMap">
+		select * from tb_question_tag where tag_id=#{tagId};
+	</select>
+	<delete id="deleteTag" parameterType="Integer">
+		delete from tb_question_tag where tag_id=#{tagId};
+	</delete>
+	<update id="updateTag" parameterType="com.db.entity.QuestionTag">
+	    update tb_question_tag 
+	    <set>
+	    <if test="tagName != null and tagName !=''">
+	    tag_name=#{tagName}
+	    </if>
+	     <if test="subject != null">
+	      ,subject=#{subject}
+	    </if>
+	    <if test="grade !=null">
+	      ,grade = #{grade}
+	    </if>
+	    
+	    </set>  
+	    where tag_id=#{tagId};
+	</update>
+	<select id="getTagName" resultMap="QuestionTagMap">
+	   select * from tb_question_tag where tag_name=#{tagName}
+	</select>
+	<select id="getTagByIds" resultMap="QuestionTagMap">
+		select * from tb_question_tag where tag_id in
+		<foreach item="list" collection="list" 
+		 	open="(" separator="," close=")">  
+ 			 #{list}
+ 		</foreach>
+	</select>
+	<select id="getTagByOther" resultMap="QuestionTagMap">
+	  select * from tb_question_tag where 1=1
+	  <if test="subjectId != null">
+	  and subject = #{subjectId}
+	  </if>
+	  <if test="gradeId != null">
+	  and grade = #{gradeId}
+	  </if>
+	</select>
+</mapper>

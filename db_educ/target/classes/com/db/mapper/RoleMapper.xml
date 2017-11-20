@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.RoleService">
+	<resultMap type="com.db.entity.Role" id="RoleMap">
+		<result column="role_id" property="roleId" jdbcType="INTEGER" />
+		<result column="role_name" property="roleName" jdbcType="VARCHAR" />
+		<result column="role_describe" property="roleDescribe"
+			jdbcType="VARCHAR" />
+		<result column="is_modify" property="isModify" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="menu_ids" property="menuIds" jdbcType="VARCHAR" />
+
+
+	</resultMap>
+	<select id="getRoleList" resultMap="RoleMap">
+		select * from tb_role where 1=1
+		<if test="roleName != null and roleName != ''">
+			and role_name like CONCAT('%','${roleName}','%')
+		</if>
+		order by create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<select id="getRoleCount" resultType="int">
+		select count(*) from tb_role where 1=1
+		<if test="roleName != null and roleName != ''">
+			and role_name like CONCAT('%','${roleName}','%')
+		</if>
+	</select>
+	<delete id="roleDelete" parameterType="java.lang.Integer">
+		delete from tb_role where role_id=#{roleId}
+	</delete>
+
+	<insert id="addRole" parameterType="com.db.entity.Role"
+		useGeneratedKeys="true" keyProperty="roleId">
+
+		insert into tb_role(role_name,is_modify,create_time,menu_ids
+		<if test="roleDescribe != null and roleDescribe !='' ">
+			<![CDATA[,role_describe]]>
+		</if>
+		)
+		values(#{roleName},#{isModify},#{createTime},#{menuIds}
+		<if test="roleDescribe != null and roleDescribe !='' ">
+			<![CDATA[,#{roleDescribe}]]>
+		</if>
+		)
+	</insert>
+	<select id="getRoleById" resultMap="RoleMap">
+		select * from tb_role where role_id=#{roleId}
+	</select>
+	<select id="getRoleMenuIds" resultMap="RoleMap">
+
+		select * from tb_role where role_id=#{roleId}
+	</select>
+	<update id="updateRole" parameterType="com.db.entity.Role"
+	useGeneratedKeys="true" keyProperty="roleId">
+		update tb_role
+		<set>
+			menu_ids=#{menuIds}
+			<if test="roleName != null and roleName != ''">
+				,role_name=#{roleName}
+			</if>
+			<if test="roleDescribe != null and roleDescribe != ''">
+				,role_describe=#{roleDescribe}
+			</if>
+			,is_modify=#{isModify}
+		</set>
+		where role_id=#{roleId}
+	</update>
+	
+	<select id="getRoleIdsById" resultMap="RoleMap">
+	   select * from tb_role where  role_id in 
+	   <foreach item="item"  index="index" collection="ids" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+	</select>
+	<select id="getRnameList" resultMap="RoleMap">
+	 select * from tb_role where role_id &lt;&gt;1
+	</select>
+	<select id="getRole" resultMap="RoleMap">
+	 select * from tb_role where role_id &lt;&gt;1
+	</select>
+	<select id="findIsName" resultMap="RoleMap">
+	   select * from tb_role where role_name=#{roleName} and role_id!=#{roleId}
+	</select>
+	<select id="findIsName1" resultMap="RoleMap">
+	   select * from tb_role where role_name=#{roleName}
+	</select>
+	<select id="getRoleStringById" resultMap="RoleMap">
+	    select * from  tb_role where role_id=#{roleId}
+	</select>
+</mapper>

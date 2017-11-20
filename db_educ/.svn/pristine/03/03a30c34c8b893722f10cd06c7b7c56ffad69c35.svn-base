@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.CourseService">
+	<resultMap id="CourseMap" type="com.db.entity.Course">
+		<result column="course_id" property="courseId" jdbcType="INTEGER" />
+		<result column="room_id" property="roomId" jdbcType="INTEGER" />
+		<result column="class_id" property="classId" jdbcType="INTEGER" />
+		<result column="course_type" property="courseType" jdbcType="INTEGER" />
+		<result column="course_date" property="courseDate" jdbcType="VARCHAR" />
+		<result column="course_times" property="courseTimes" jdbcType="INTEGER" />
+		<result column="lecturenote_id" property="lecturenoteId"
+			jdbcType="INTEGER" />
+		<result column="exam_id" property="examId" jdbcType="INTEGER" />
+		<result column="homework_id" property="homeworkId" jdbcType="INTEGER" />
+		<result column="paper_status" property="paperStatus" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="subject_id" property="subjectId" jdbcType="INTEGER" />
+		<result column="homework_status" property="homeworkStatus" jdbcType="INTEGER" />
+
+<!-- 		<association javaType="com.db.entity.PaperRecord" -->
+<!-- 			property="paperRecord"> -->
+<!-- 			<id column="exam_record_id" property="recordId" jdbcType="INTEGER" /> -->
+<!-- 			<result column="course_id" property="courseId" jdbcType="INTEGER" /> -->
+<!-- 			<result column="paper_id" property="paperId" jdbcType="VARCHAR" /> -->
+<!-- 			<result column="class_id" property="classId" jdbcType="VARCHAR" /> -->
+<!-- 			<result column="teacher_id" property="teacherId" jdbcType="VARCHAR" /> -->
+<!-- 			<result column="status" property="status" jdbcType="VARCHAR" /> -->
+<!-- 		</association> -->
+		
+		<association property="lectureNotes" javaType="com.db.entity.LectureNotes">
+			<id column="handout_id" property="handoutId" jdbcType="INTEGER" />
+			<result column="handout_title" property="handoutTitle"
+				jdbcType="VARCHAR" />
+			<result column="handout_content" property="handoutContent"
+				jdbcType="VARCHAR" />
+			<result column="handout_type" property="handoutType" jdbcType="INTEGER" />
+			<result column="create_user" property="createUser" jdbcType="INTEGER" />
+			<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+			<result column="word_pdf_route" property="wordpdfRoute" jdbcType="VARCHAR"/>
+		</association>
+
+		<association property="classNo1" javaType="com.db.entity.ClassNo">
+			<id column="class_id" property="classId" jdbcType="INTEGER" />
+			<result column="class_name" property="className" jdbcType="VARCHAR" />
+			<result column="grade" property="grade" jdbcType="VARCHAR" />
+			<result column="school_area" property="schoolArea" jdbcType="INTEGER" />
+		</association>
+
+		<association property="classroom" javaType="com.db.entity.Classroom">
+			<id column="classroom_id" property="classroomId" jdbcType="INTEGER" />
+			<result column="classroom_name" property="classroomName"
+				jdbcType="VARCHAR" />
+		</association>
+
+		<association property="grade" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+
+		<association javaType="com.db.entity.Subject" property="subject">
+			<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+			<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		</association>
+		<association property="homework" javaType="com.db.entity.Homework">
+			<id column="hk_id" property="hkId" jdbcType="INTEGER" />
+			<result column="hk_name" property="hkName" jdbcType="VARCHAR" />
+		</association>
+		<collection property="classlist" resultMap="ClassNoMap"></collection>
+		<collection property="paperInfo" resultMap="PaperInfoMap"></collection>
+	</resultMap>
+
+	<resultMap id="PaperInfoMap" type="com.db.entity.PaperInfo">
+		<id column="pi_id" property="piId" jdbcType="INTEGER" />
+		<result column="pi_name" property="piName" jdbcType="VARCHAR" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="pi_type" property="piType" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER" />
+		<result column="science" property="science" jdbcType="INTEGER" />
+		<result column="used_times" property="usedTimes" jdbcType="INTEGER" />
+		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="difficulty_value" property="difficultyValue"
+			jdbcType="INTEGER" />
+		<result column="build_user" property="buildUser" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="build_user_name" property="buildUserName"
+			jdbcType="VARCHAR" />
+		<!--连表1 -->
+		<association property="subject2" javaType="com.db.entity.Subject">
+			<id property="subjectId" column="subject_id" />
+			<result property="subjectName" column="subject_name" />
+		</association>
+		<!--连表2 -->
+		<association property="questionsType" javaType="com.db.entity.QuestionsType">
+			<id property="topicId" column="topic_id" />
+			<result property="topicName" column="topic_name" />
+			<result property="createTime" column="create_time" />
+			<result property="updateTime" column="update_time" />
+			<result property="typicOrder" column="typic_order" />
+		</association>
+		<!--连表3 -->
+		<association property="paperDetails" javaType="com.db.entity.PaperDetails">
+			<id property="questionId" column="question_id" />
+			<result property="paperId" column="paper_id" />
+			<result property="value" column="value" />
+			<result property="number" column="number" />
+			<result property="createTime" column="create_time" />
+		</association>
+
+	</resultMap>
+
+	<resultMap id="ClassNoMap" type="com.db.entity.ClassNo">
+		<id column="class_id" property="classId" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="INTEGER" />
+		<result column="grade" property="grade" jdbcType="INTEGER" />
+		<result column="class_name" property="className" jdbcType="VARCHAR" />
+		<result column="class_number" property="classNumber" jdbcType="INTEGER" />
+		<result column="season_type" property="seasonType" jdbcType="INTEGER" />
+		<collection property="subjectlist" resultMap="SubjectMap"></collection>
+		<collection property="gradelist" resultMap="GradeMap"></collection>
+	</resultMap>
+
+	<resultMap type="com.db.entity.Subject" id="SubjectMap">
+		<id column="subject_id" property="subjectId" jdbcType="INTEGER" />
+		<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="com.db.entity.Grade" id="GradeMap">
+		<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getAllCourse" parameterType="String" resultMap="CourseMap">
+		select * from tb_course tc left join
+		tb_class_no tcn on
+		tc.class_id=tcn.class_id left join
+		tb_subject ts on
+		tcn.subject=ts.subject_id
+		left join tb_grade g on tcn.grade=g.grade_id
+		where
+		tc.course_date=#{courseDate} and tc.course_type=0
+	</select>
+
+	<select id="getCourseByHoliday" resultMap="CourseMap">
+		select * from
+		tb_course tc left join
+		tb_class_no tcn on tc.class_id=tcn.class_id left
+		join
+		tb_subject ts on tcn.subject=ts.subject_id
+		left join tb_grade g on tcn.grade=g.grade_id
+		where course_type=1 and
+		tc.course_date=#{courseDate}
+	</select>
+	<select id="getCourseByHolidayCount" resultMap="CourseMap">
+		select * from
+		tb_course tc left join
+		tb_class_no tcn on
+		tc.class_id=tcn.class_id left
+		join
+		tb_subject ts on
+		tcn.subject=ts.subject_id where tc.course_type=1
+		 GROUP BY tc.course_date
+	</select>
+
+	<select id="getCourseBySpringfallCount" resultMap="CourseMap">
+		select * from
+		tb_course tc left join
+		tb_class_no tcn on
+		tc.class_id=tcn.class_id left
+		join
+		tb_subject ts on
+		tcn.subject=ts.subject_id where tc.course_type=0
+		 GROUP BY tc.course_date
+	</select>
+
+
+	<select id="getCourseByGradeandSubject" resultMap="CourseMap">
+		select * from tb_course tc
+		left join tb_class_no tcn on tc.class_id=tcn.class_id
+		left join tb_subject ts on tcn.subject=ts.subject_id
+		left join tb_lecture_notes tl on tc.lecturenote_id=tl.handout_id
+		left join tb_paper_info tpi on tc.exam_id=tpi.pi_id
+<!-- 		left join tb_paper_record tpr on tc.paper_record_id=tpr.exam_record_id -->
+<!--         left join tb_class_record cc ON tc.class_id=cc.class_id -->
+		left join tb_grade g on tcn.grade=g.grade_id
+		<where>
+			tc.course_id is not null
+			<if test="classId != null">
+				and tc.class_id=#{classId}
+			</if>
+			<if test="courseDate != null and courseDate != ''">
+				and tc.course_date=#{courseDate}
+			</if>
+		</where>
+		order by tc.course_date desc limit #{pageNo},#{pageSize};
+	</select>
+
+	<select id="getCourseByGradeandSchoolId" resultMap="CourseMap">
+		select * from tb_course tc
+		right join tb_class_no tcn on tc.class_id=tcn.class_id
+		left join tb_subject ts on tcn.subject=ts.subject_id
+		left join
+		tb_lecture_notes tl on tc.lecturenote_id=tl.handout_id
+		left join tb_paper_info tpi on tc.exam_id=tpi.pi_id
+<!-- 		left join tb_paper_record tpr on tc.paper_record_id=tpr.exam_record_id -->
+<!--         left join tb_class_record cc ON tc.class_id=cc.class_id -->
+		left join tb_grade g on tcn.grade=g.grade_id
+		<where>
+			tc.course_id is not null
+			<!-- 因为classid可能多个值 -->
+			<!-- and tc.class_id=#{classId} -->
+			<if test="classId != null">
+				and tc.class_id in ( #{classId} )
+			</if>
+			<if test="schoolId != null">
+				and tcn.school_area=#{schoolId}
+			</if>
+			<if test="courseDate != null and courseDate != ''">
+				and tc.course_date=#{courseDate}
+			</if>
+		</where>
+		order by tc.course_date desc limit #{pageNo},#{pageSize};
+	</select>
+	
+	<select id="getCourseByGradeandSchoolIds" resultMap="CourseMap">
+		select * from tb_course tc
+		right join tb_class_no tcn on tc.class_id=tcn.class_id
+		left join tb_subject ts on tcn.subject=ts.subject_id
+		left join
+		tb_lecture_notes tl on tc.lecturenote_id=tl.handout_id
+		left join tb_paper_info tpi on tc.exam_id=tpi.pi_id
+<!-- 		left join tb_paper_record tpr on tc.paper_record_id=tpr.exam_record_id -->
+<!--         left join tb_class_record cc ON tc.class_id=cc.class_id -->
+		left join tb_grade g on tcn.grade=g.grade_id
+		<where>
+			tc.course_id is not null
+			<!-- 因为classid可能多个值 -->
+			<!-- and tc.class_id=#{classId} -->
+			<if test="classId != null">
+				and tc.class_id in
+				<foreach collection="classId" item="classId" open="(" separator="," close=")">
+					#{classId}
+				</foreach>
+			</if>
+			<if test="schoolId != null">
+				and tcn.school_area=#{schoolId}
+			</if>
+			<if test="courseDate != null and courseDate != ''">
+				and tc.course_date=#{courseDate}
+			</if>
+		</where>
+		order by tc.course_date desc limit #{pageNo},#{pageSize};
+	</select>
+
+	<select id="getCourseBySchoolId" resultMap="CourseMap">
+		select * from tb_course tc
+		right join tb_class_no tcn on tc.class_id=tcn.class_id
+		left join tb_subject ts on tcn.subject=ts.subject_id
+		left join
+		tb_lecture_notes tl on tc.lecturenote_id=tl.handout_id
+		left join tb_paper_info tpi on tc.exam_id=tpi.pi_id
+<!-- 		left join tb_paper_record tpr on tc.paper_record_id=tpr.exam_record_id -->
+        left join tb_class_record cc ON tc.class_id=cc.class_id
+		left join tb_grade g on tcn.grade=g.grade_id
+		<where>
+			tc.course_id is not null
+			<if test="classId != null">
+				and tc.class_id=#{classId}
+			</if>
+			<if test="schoolId != null">
+				and tcn.school_area=#{schoolId}
+			</if>
+			<if test="courseDate != null and courseDate != ''">
+				and course_date=#{courseDate}
+			</if>
+		</where>
+		order by tc.course_date desc limit #{pageNo},#{pageSize};
+	</select>
+
+	<!-- 作业管理列表 -->
+	<select id="getCourse_HomeworkByClass" resultMap="CourseMap">
+		select * from tb_course tc
+		left join tb_class_no tcn on tc.class_id=tcn.class_id
+		left join tb_subject ts on tcn.subject=ts.subject_id
+		left join td_homework th on tc.homework_id=th.hk_id
+		left join tb_grade g on tcn.grade=g.grade_id
+		where 1=1
+		<if test="classId != null and classId != ''">
+			and tc.class_id=#{classId}
+		</if>
+		<if test="courseDate != null and courseDate != ''">
+			and course_date=#{courseDate}
+		</if>
+		order by tc.course_date desc limit #{pageNo},#{pageSize};
+	</select>
+	<!-- 作业管理的总条数 -->
+	<select id="getCount" resultType="int">
+		select count(*) from tb_course where room_id is not null
+		<if test="classId != null">
+			and class_id=#{classId}
+		</if>
+		<if test="courseDate != null and courseDate != ''">
+			and course_date=#{courseDate}
+		</if>
+	</select>
+
+	<!-- 作业管理的总条数 -->
+	<select id="getSchoolIdCount" resultType="int">
+		select count(*) from tb_course cou
+		left join tb_class_no cla on
+		cou.class_id=cla.class_id
+		where cou.room_id is not null
+		<if test="classId != null">
+			and cou.class_id=#{classId}
+		</if>
+		<if test="schoolId != null">
+			and cla.school_area=#{schoolId}
+		</if>
+		<if test="courseDate != null and courseDate != ''">
+			and cou.course_date=#{courseDate}
+		</if>
+	</select>
+	
+	<!-- 作业管理的总条数 -->
+	<select id="getSchoolIdCountbyids" resultType="int">
+		select count(*) from tb_course cou
+		left join tb_class_no cla on
+		cou.class_id=cla.class_id
+		where cou.room_id is not null
+		<if test="classId != null">
+		and cou.class_id in
+			<foreach collection="classId" item="Id" open="(" separator="," close=")">
+					#{Id}
+			</foreach>
+		</if>
+		<if test="schoolId != null">
+			and cla.school_area=#{schoolId}
+		</if>
+		<if test="courseDate != null and courseDate != ''">
+			and cou.course_date=#{courseDate}
+		</if>
+	</select>
+
+	<select id="getCourseById" parameterType="Integer" resultMap="CourseMap">
+		select * from tb_course tc left join tb_class_no tcn on
+		tc.class_id=tcn.class_id where course_id=#{courseId};
+	</select>
+
+	<select id="getCourseByClass" resultMap="CourseMap">
+		select * from tb_course
+		tc left join tb_class_no tcn on
+		tc.class_id=tcn.class_id left join
+		tb_lecture_notes
+		tln on tc.lecturenote_id=tln.handout_id left join
+		tb_subject
+		ts on tcn.subject=ts.subject_id where
+		tc.class_id=#{classId}
+		and
+		tc.course_date >= #{courseDate} order by tc.course_date desc;
+	</select>
+
+	<!-- 前端查看课程讲义 -->
+	<select id="getCourseByClassList" resultMap="CourseMap">
+		select * from tb_course
+		tc left join tb_class_no tcn on
+		tc.class_id=tcn.class_id left join
+		tb_lecture_notes
+		tln on
+		tc.lecturenote_id=tln.handout_id left join tb_subject
+		ts on
+		tc.subject_id=ts.subject_id
+		where 1=1 
+		<!-- tc.course_date &gt;=#{courseDate} -->
+		<!-- by zhangzhaojian -->
+		<if test="classlist !=null and classlist !=''">
+		and tc.class_id in
+		<foreach collection="classlist" item="classlist" open="(" separator="," close=")">
+		#{classlist}
+		</foreach>
+		</if>
+		<if test="classid !=null and classid !=''">
+		and tc.class_id=#{classid}
+		</if>
+		order by tc.course_date desc;
+	</select>
+
+	<select id="findcCourseDateLit" resultMap="CourseMap">
+		select * from tb_course
+		tc left join tb_class_no tcn on
+		tc.class_id=tcn.class_id left join
+		tb_lecture_notes
+		tln on
+		tc.lecturenote_id=tln.handout_id left join tb_subject
+		ts on
+		tc.subject_id=ts.subject_id where tc.course_date=#{courseDate}
+		<if test="classlist !=null and classlist !=''">
+			and tc.class_id in
+			<foreach collection="classlist" item="classlist" open="("
+				separator="," close=")">
+				#{classlist}
+			</foreach>
+		</if>
+		<if test="classid !=null and classid !=''">
+			and tc.class_id=#{classid}
+		</if>
+		order by tc.course_date desc;
+	</select>
+
+	<insert id="addCourse" parameterType="com.db.entity.Course"
+		useGeneratedKeys="true" keyProperty="courseId">
+		insert into
+		tb_course(class_id,course_date,create_time
+		<if test="roomId != null">
+		    <![CDATA[,room_id]]>
+		</if>
+		<if test="courseTimes != null and courseTimes != ''">
+		    <![CDATA[,course_times]]>
+		</if>
+		<if test="courseType != null">
+		    <![CDATA[,course_type]]>
+		</if>
+		<if test="subjectId != null and subjectId != ''">
+		    <![CDATA[,subject_id]]>
+		</if>
+		<if test="examId != null">
+		    <![CDATA[,exam_id]]>
+		</if>
+		
+		)
+		values(#{classId},#{courseDate},#{createTime}
+		<if test="roomId != null">
+		    <![CDATA[,#{roomId}]]>
+		</if>
+		<if test="courseTimes != null and courseTimes != ''">
+		    <![CDATA[,#{courseTimes}]]>
+		</if>
+		<if test="courseType != null">
+		    <![CDATA[,#{courseType}]]>
+		</if>
+		<if test="subjectId != null and subjectId != ''">
+         <![CDATA[,#{subjectId}]]>
+		</if>
+		<if test="examId != null">
+		    <![CDATA[,#{examId}]]>
+		</if>
+		)
+	</insert>
+
+	<update id="updateCoursebynote" parameterType="com.db.entity.Course">
+		update tb_course
+		set lecturenote_id=#{lecturenoteId},update_time=#{updateTime}
+		where
+		course_id=#{courseId};
+	</update>
+
+	<update id="updateCoursebyexam" parameterType="com.db.entity.Course">
+		update tb_course
+		<set>
+			update_time=#{updateTime},
+			<if test="examId != null and examId !=''">
+				exam_id=#{examId},
+			</if>
+			
+			<if test="homeworkId != null">
+				homework_id=#{homeworkId},
+			</if>
+			<if test="paperStatus != null">
+				paper_status=#{paperStatus},
+			</if>
+			<if test="homeworkStatus != null">
+				homework_status=#{homeworkStatus},
+			</if>
+		</set>
+		where course_id=#{courseId};
+	</update>
+	<!-- 要设置examid为空 -->
+	<update id="updateCoursebyexam1" parameterType="com.db.entity.Course">
+		update tb_course
+		set update_time=#{updateTime},exam_id=#{examId}
+		where course_id=#{courseId};
+	</update>
+	<!-- 要设置讲义id为空 -->
+	<update id="updateCoursebynote1" parameterType="com.db.entity.Course">
+		update tb_course
+		set update_time=#{updateTime},lecturenote_id=#{lecturenoteId}
+		where course_id=#{courseId};
+	</update>
+
+	<update id="updateCoursebyhomework" parameterType="com.db.entity.Course">
+		update
+		tb_course
+		set
+		homework_id=#{homeworkId},update_time=#{updateTime}
+		where
+		course_id=#{courseId};
+	</update>
+
+
+	<update id="updateCourseTest" parameterType="com.db.entity.Course">
+		update tb_course
+		<set>
+			update_time=#{updateTime}
+			<if test="examId != null">
+				,exam_id=#{examId}
+			</if>
+			<if test="roomId != null">
+				,room_id=#{roomId}
+			</if>
+			<if test="courseDate != null and courseDate !=''">
+				,course_date=#{courseDate}
+			</if>
+		</set>
+		where course_date=#{courseDate} and
+		course_times=#{courseTimes}
+		<if test="classId != null">
+			and class_id=#{classId}
+		</if>
+	</update>
+
+	<select id="getStatusByClassAndDate" resultMap="CourseMap">
+		select * from
+		tb_course tc left join tb_class_no tcn on
+		tc.class_id=tcn.class_id
+		where tc.course_date=#{courseDate}
+		and tc.class_id=#{classId} and
+		course_times=#{time};
+	</select>
+	<!-- and course_times=#{time}; -->
+	<select id="getCourseByClassandDateandtime" resultMap="CourseMap">
+		select *
+		from tb_course where course_date=#{courseDate} and
+		class_id=#{classId} and course_type=#{type}
+	</select>
+	<!-- 查找是否有任务 -->
+	<select id="getIsAddTask" resultMap="CourseMap">
+		select * from tb_course
+		where course_date=#{date} and
+		class_id=#{classId} 
+	</select>
+
+	<select id="getDateByClass" resultMap="CourseMap">
+		select course_date from tb_course tc right join tb_class_no tcn on
+		tc.class_id=tcn.class_id
+		<!-- <if test="classlist != null and classlist != ''"> -->
+		<!-- where tc.class_id in <foreach item="classlist" collection="classlist" 
+			open="(" -->
+		<!-- separator="," close=")"> -->
+		<!-- #{classlist} -->
+		<!-- </foreach> -->
+		<!-- </if> -->
+		<if test="classId != null">
+			where tc.class_id=#{classId}
+		</if>
+		order by course_date desc;
+	</select>
+
+	<delete id="deleteCourseById">
+		delete from tb_course where course_id=#{courseId};
+	</delete>
+
+	<select id="getRoomByCourseandDate" resultType="long">
+		select count(*)
+		from tb_course where room_id=#{roomId} and course_date>=#{date};
+	</select>
+
+	<select id="findClassCourseList" resultMap="CourseMap">
+		select * from tb_course cou
+		left join tb_class_no cn on cou.class_id=cn.class_id
+		left join tb_subject sub on cou.subject_id=sub.subject_id
+		left join tb_grade g on cn.grade=g.grade_id
+		left join tb_classroom coom on cou.room_id=coom.classroom_id
+		left join tb_lecture_notes ln on cou.lecturenote_id=ln.handout_id
+		where 1=1
+		<if test="classId != null">
+			and cou.class_id=#{classId}
+		</if>
+		<if test="date != null and date != ''">
+			and cou.course_date=#{date}
+		</if>
+		<if test="type != null">
+			and cou.course_type=#{type}
+		</if>
+		order by cou.course_date 
+		<if test="pageNo != null and pageSize != null">
+			limit #{pageNo},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="findClassCourseListbyIds" resultMap="CourseMap">
+		select * from tb_course cou
+		left join tb_class_no cn on cou.class_id=cn.class_id
+		left join tb_subject sub on cou.subject_id=sub.subject_id
+		left join tb_grade g on cn.grade=g.grade_id
+		left join tb_classroom coom on cou.room_id=coom.classroom_id
+		left join tb_lecture_notes ln on cou.lecturenote_id=ln.handout_id
+		where 1=1
+		<if test="classIdList != null">
+			and cou.class_id in
+			<foreach collection="classIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}       
+        	</foreach>    
+		</if>
+		
+		<if test="date != null and date != ''">
+			and cou.course_date=#{date}
+		</if>
+		<if test="type != null">
+			and cou.course_type=#{type}
+		</if>
+		order by cou.course_date 
+		<if test="pageNo != null and pageSize != null">
+			limit #{pageNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="getClassCourseCount" resultType="int">
+	select count(*) from tb_course where 1=1
+	<if test="classId != null">
+		and class_id=#{classId}
+	</if>
+	<if test="date != null and date != ''">
+		and course_date=#{date}
+	</if>
+	</select>
+	
+	<select id="getClassCourseCountbyIds" resultType="int">
+	select count(*) from tb_course where 1=1
+	<if test="classIdList != null">
+			and class_id in
+		 <foreach collection="classIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>    
+	</if>
+	<if test="date != null and date != ''">
+		and course_date=#{date}
+	</if>
+	</select>
+	
+	<select id="findNontClassId" resultMap="CourseMap">
+	 select * from tb_course where class_id=#{classId} 
+	 <if test="lecturenoteId != null">
+	  and lecturenote_id=#{lecturenoteId}
+	 </if>
+	<if test="homeworkId != null">
+	 and homework_id=#{homeworkId}
+	</if>
+	<if test="paperId != null">
+	 and exam_id=#{paperId}
+	</if>
+	</select>
+	<select id="findCourseDateList" resultMap="CourseMap">
+	 select * from tb_course where class_id=#{classId} 
+	 <if test="courseDate != null and courseDate !=''">
+	  and course_date=#{courseDate}
+	 </if>
+	</select>
+	<update id="deleteExam" parameterType="com.db.entity.Course">
+		update tb_course set  update_time=#{updateTime},exam_id=#{examId} where course_id=#{courseId};	
+</update>
+	<update id="deleteHome" parameterType="com.db.entity.Course">
+		update tb_course set  update_time=#{updateTime},homework_id=#{homeworkId} where course_id=#{courseId};	
+</update>
+</mapper>

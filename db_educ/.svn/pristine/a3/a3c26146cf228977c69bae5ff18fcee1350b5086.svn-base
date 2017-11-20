@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.StudentScoreService">
+	<resultMap type="com.db.entity.StudentScore" id="studentScoreMap">
+		<result column="score_id" property="scoreId" jdbcType="INTEGER" />
+		<result column="student_id" property="studentId" jdbcType="INTEGER" />
+		<result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+		<result column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="year_id" property="yearId" jdbcType="INTEGER" />
+		<result column="score" property="score" jdbcType="DOUBLE" />
+		<result column="create_time" property="createTime" />
+		<result column="pay_type" property="payType" jdbcType="INTEGER" />
+		
+		<association property="grade" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+		<association property="schoolZone" javaType="com.db.entity.SchoolZone">
+		   <id column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		</association>
+		<association property="student" javaType="com.db.entity.Student">
+			<id column="student_id" property="studentId" jdbcType="INTEGER" />
+			<result column="student_name" property="studentName" jdbcType="VARCHAR" />
+		</association>
+
+	</resultMap>
+
+	<select id="getScoreStudentById" resultMap="studentScoreMap">
+		select * from td_student_score where student_id=#{studentId} and
+		paper_id=#{paperId}
+	</select>
+
+	<insert id="addScore" parameterType="com.db.entity.Student"
+		useGeneratedKeys="true" keyProperty="scoreId">
+		insert into td_student_score
+		(student_id,grade_id,paper_id,score,create_time
+		<if test="schoolId != null">
+		<![CDATA[,school_id]]>
+		</if>
+		<if test="yearId != null">
+		<![CDATA[,year_id]]>
+		</if>
+		)
+		values(#{studentId},#{gradeId},#{paperId},#{score},#{createTime}
+		<if test="schoolId != null">
+		<![CDATA[,#{schoolId}]]>
+		</if>
+		<if test="yearId != null">
+		<![CDATA[,#{yearId}]]>
+		</if>
+		)
+	</insert>
+
+	<update id="updateScore" parameterType="com.db.entity.StudentScore">
+		update td_student_score 
+		<set>
+		create_time=#{createTime}
+		<if test="score != null">
+		 ,score=#{score}
+		</if>
+		<if test="schoolId != null">
+		 ,school_id=#{schoolId}
+		</if>
+		</set>  
+		where student_id=#{studentId} and paper_id=#{paperId}
+	</update>
+	
+	<update id="updateStudentScore" parameterType="com.db.entity.StudentScore">
+	update td_student_score 
+		<set>
+		create_time=#{createTime}
+		<if test="score != null">
+		 ,score=#{score}
+		</if>
+		<if test="schoolId != null">
+		 ,school_id=#{schoolId}
+		</if>
+		<if test="payType != null">
+		 ,pay_type=#{payType}
+		</if>
+		</set>  
+		where score_id=#{scoreId}
+	</update>
+<select id="getCount" resultType="int">
+	select count(*) from td_student_score where 1=1
+	<if test="gradeId != null">
+		and grade_id=#{gradeId}
+	</if>
+	<if test="schoolId != null">
+		and school_id=#{schoolId}
+	</if>
+</select>
+<select id="getScoreList" resultMap="studentScoreMap">
+  select * from td_student_score sc left join tb_grade g on sc.grade_id=g.grade_id
+    left join tb_school_zone sz on sc.school_id=sz.school_id 
+    left join tb_student s on sc.student_id=s.student_id
+    where 1=1
+   <if test="gradeId != null">
+		and sc.grade_id=#{gradeId}
+	</if>
+	<if test="schoolId != null">
+		and sc.school_id=#{schoolId}
+	</if>
+	<choose>
+	<when test="school != null">
+		order by sc.school_id desc limit #{pageNo},#{pageSize}
+	</when>
+	<when test="grade != null">
+		order by sc.grade_id desc limit #{pageNo},#{pageSize}
+	</when>
+	<when test="score != null">
+		order by sc.score desc limit #{pageNo},#{pageSize}
+	</when>
+	<otherwise>
+		order by sc.create_time desc limit #{pageNo},#{pageSize}
+	</otherwise>
+</choose>
+</select>
+<delete id="deleteScoreId" parameterType="int">
+delete from td_student_score where score_id=${scoreId}
+</delete>
+<select id="getStudentScoreById" resultMap="studentScoreMap">
+  SELECT * from td_student_score where score_id=${scoreId}
+</select>
+</mapper>

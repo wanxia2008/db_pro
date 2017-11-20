@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.db.service.StudentExaminationService">
+	<resultMap id="ExaminationMap" type="com.db.entity.StudentExamination">
+		<result column="exam_id" property="examId" jdbcType="INTEGER" />
+		<result column="subject" property="subjectId" jdbcType="INTEGER" />
+		<result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+		<result column="choice_id" property="choiceId" jdbcType="INTEGER" />
+		<result column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="year" property="year" jdbcType="INTEGER" />
+		<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" /> 	
+		<result column="update_time" property="updateTime" /> 
+		<result column="end_time" property="endTime" /> 
+		
+		
+		<association property="paperInfo" javaType="com.db.entity.PaperInfo">
+			<id column="pi_id" property="piId" jdbcType="INTEGER" />
+			<result column="pi_name" property="piName" jdbcType="VARCHAR" />
+			<result column="subject" property="subject" jdbcType="INTEGER" />
+			<result column="pi_type" property="piType" jdbcType="INTEGER" />
+			<result column="grade" property="grade" jdbcType="INTEGER" />
+			<result column="topic_totai" property="topicTotai" jdbcType="VARCHAR" />
+				<result column="paper_explain" property="paperExplain" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="testRecord" javaType="com.db.entity.TestRecord">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<result column="student_id" property="studentId" jdbcType="INTEGER" />
+	<result column="subject" property="subjectId" jdbcType="INTEGER" />
+	<result column="paper_type" property="paperType" jdbcType="INTEGER" />
+	<result column="paper_id" property="paperId" jdbcType="INTEGER" />
+	<result column="class_id" property="classId" jdbcType="INTEGER" />
+	<result column="score" property="score" jdbcType="DOUBLE" />
+	<result column="write_number" property="writeNumber" jdbcType="INTEGER" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+	<result column="create_time" property="createTime" />
+	<result column="update_time" property="updateTime" />
+	<result column="total_time" property="totalTime" />
+	<result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+	<result column="year" property="year" jdbcType="INTEGER" />
+	<result column="choice_id" property="choiceId" jdbcType="INTEGER" />
+	<result column="examen_status" property="examenStatus" jdbcType="INTEGER" />
+	<result column="score_rank" property="scoreRank" jdbcType="INTEGER" />
+</association>
+		
+		<association property="subject2" javaType="com.db.entity.Subject">
+			<id property="subjectId" column="subject_id" />
+			<result property="subjectName" column="subject_name" />
+		</association>
+		
+		<association property="grade" javaType="com.db.entity.Grade">
+			<id column="grade_id" property="gradeId" jdbcType="INTEGER" />
+			<result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+		</association>
+		
+		<association property="schoolZone" javaType="com.db.entity.SchoolZone">
+			<id column="school_id" property="schoolId" jdbcType="INTEGER" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		
+		</association>
+		
+		<association property="seasonType" javaType="com.db.entity.SeasonType">
+			<id column="season_id" property="seasonId" jdbcType="INTEGER" />
+		<result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+		
+		</association>
+		<association property="schoolYear" javaType="com.db.entity.SchoolYear">
+			 <id column="id" property="id" jdbcType="INTEGER" />    
+        <result column="school_year" property="year" jdbcType="INTEGER" /> 
+		
+		</association>
+		
+	</resultMap>
+	
+	
+	<insert id="addExamination" parameterType="com.db.entity.StudentExamination">
+	insert into
+		td_student_examination (create_time,end_time,subject,status,year,choice_id,school_id,grade_id,paper_id) 
+		values(#{createTime},#{endTime},#{subjectId},#{status},#{year},#{choiceId},#{schoolId},#{gradeId},#{paperId})
+	</insert>
+<select id="getExaminationById" resultMap="ExaminationMap">
+  select * from td_student_examination where exam_id=#{examId}
+</select>
+
+<update id="updateExamination" parameterType="com.db.entity.StudentExamination">
+	update
+		td_student_examination <set>
+		   update_time=#{updateTime}
+		   <if test="schoolId != null">
+		   ,school_id=#{schoolId}
+		   </if>
+		    <if test="choiceId != null">
+		   ,choice_id=#{choiceId}
+		   </if>
+		     <if test="year != null">
+		   ,year=#{year}
+		   </if>
+		    <if test="gradeId != null">
+		   ,grade_id=#{gradeId}
+		   </if>
+		     <if test="gradeId != null">
+		   ,subject=#{subjectId}
+		   </if>
+		   <if test="createTime != null and createTime !=''">
+		   ,create_time=#{createTime}
+		   </if>
+		    <if test="endTime != null and endTime !=''">
+		   ,end_time=#{endTime}
+		   </if>
+		</set> 
+		where exam_id=#{examId}
+	</update>
+	<delete id="deleteRecordById" parameterType="java.lang.Integer">
+		delete from td_student_examination where exam_id=#{examId}
+	</delete>
+	<update id="updateStatus" parameterType="com.db.entity.StudentExamination">
+	update
+		td_student_examination set update_time=#{updateTime},status=#{status}
+		where exam_id=#{examId}
+	</update>
+	<!-- 管理员 -->
+	<select id="findEexecuteList" resultMap="ExaminationMap">
+	 select * from td_student_examination tr 
+	  left join tb_subject sub on tr.subject=sub.subject_id
+	  left join tb_grade g on tr.grade_id=g.grade_id 
+	  left join tb_school_year sy on tr.year=sy.id
+	  left join tb_school_zone sz on tr.school_id=sz.school_id
+	  left join tb_season_type tyy on tr.choice_id=tyy.season_id
+	  left join tb_paper_info info on tr.paper_id=info.pi_id
+	   <where> 1=1 
+	  <if test="gradeId != null">
+	   and tr.grade_id=#{gradeId}
+	  </if>
+	  <if test="subjectId != null">
+	   and tr.subject=#{subjectId}
+	  </if>
+	   <if test="schoolId != null">
+	   and tr.school_id=#{schoolId}
+	  </if>
+	  </where>
+	  order by tr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<!-- 当前老师 -->
+	<select id="findTeacherSchoolId" resultMap="ExaminationMap">
+	 select * from td_student_examination tr 
+	  left join tb_subject sub on tr.subject=sub.subject_id
+	  left join tb_grade g on tr.grade_id=g.grade_id 
+	  left join tb_school_year sy on tr.year=sy.id
+	  left join tb_school_zone sz on tr.school_id=sz.school_id
+	  left join tb_season_type tyy on tr.choice_id=tyy.season_id
+	  left join tb_paper_info info on tr.paper_id=info.pi_id
+	   where tr.school_id=#{schoolId}
+	  <if test="gradeId != null">
+	   and tr.grade_id=#{gradeId}
+	  </if>
+	  <if test="subjectId != null">
+	   and tr.subject=#{subjectId}
+	  </if>
+	  order by tr.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	
+	<select id="getCount" resultType="int">
+	select count(*) from td_student_examination tr 
+	  left join tb_subject sub on tr.subject=sub.subject_id
+	  left join tb_grade g on tr.grade_id=g.grade_id 
+	  left join tb_school_year sy on tr.year=sy.id
+	  left join tb_school_zone sz on tr.school_id=sz.school_id
+	  left join tb_season_type tyy on tr.choice_id=tyy.season_id
+	  left join tb_paper_info info on tr.paper_id=info.pi_id
+	     where 1=1 
+	  <if test="gradeId != null">
+	   and tr.grade_id=#{gradeId}
+	  </if>
+	  <if test="subjectId != null">
+	   and tr.subject=#{subjectId}
+	  </if>
+	   <if test="schoolId != null">
+	   and tr.school_id=#{schoolId}
+	  </if>
+	</select>
+	
+	<select id="getSchoolIdCount" resultType="int">
+	 select count(*) from td_student_examination where school_id=#{schoolId}
+	  <if test="gradeId != null">
+	   and grade_id=#{gradeId}
+	  </if>
+	  <if test="subjectId != null">
+	   and subject=#{subjectId}
+	  </if>
+	  
+	</select>
+	
+<!--前段拿 入学考试列表&lt;&gt;0 -->
+<select id="getexaminationList" resultMap="ExaminationMap">
+   select * from td_student_examination se 
+     left join tb_grade g on se.grade_id=g.grade_id
+     left join tb_subject sub on se.subject=sub.subject_id
+     left join tb_paper_info info on se.paper_id=info.pi_id
+     LEFT JOIN td_test_record tt ON se.paper_id=tt.paper_id
+      where se.grade_id=#{gradeId} AND school_id=#{schoolId} 
+          and (se.status=1 or se.status=2) and info.pi_type=4
+      order by se.create_time desc limit #{pageNo},#{pageSize}
+</select>
+<select id="getPaperIdById" resultMap="ExaminationMap">
+ select * from td_student_examination where paper_id=#{paperId} and subject=#{subjectId}
+    and school_id=#{schoolId}
+</select>
+<select id="getPaperIdANDsubjectId" resultMap="ExaminationMap">
+       select * from td_student_examination where paper_id=#{paperId} and subject=#{subjectId}
+</select>
+<select id="getPaperIdExaminationById" resultMap="ExaminationMap">
+select * from td_student_examination where paper_id=#{paperId} and subject=#{subjectId}
+    and choice_id=#{choiceId} and year=#{year} and grade_id=#{gradeId} and school_id=#{schoolId} 
+</select>
+<select id="findIsExistenceCampus" resultMap="ExaminationMap">
+select * from td_student_examination where school_id=#{schoolId} 
+</select>
+</mapper>
